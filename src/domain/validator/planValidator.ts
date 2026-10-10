@@ -1,62 +1,56 @@
-import { DayEnvelope } from '../rules/envelope';
+import { Envelope } from '../rules/envelope';
+import { ZodDailyPlan, DailyPlan } from '../schemas/plan';
+import drillsData from '../../data/drills/badminton.json';
 
-export interface PlanItem {
-  id: string;
-  name: string;
-  minutes: number;
-  intensity: 'low' | 'medium' | 'high';
-}
-
-export interface DailyPlan {
-  items: PlanItem[];
-}
+export type { DailyPlan };
 
 export interface ValidationResult {
   valid: boolean;
   reasons: string[];
-  repairedPlan?: DailyPlan;
+  repairedPlan?: ZodDailyPlan;
 }
 
-const intensityWeight = {
-  low: 1,
-  medium: 2,
-  high: 3,
-};
-
-export function validatePlan(plan: DailyPlan, envelope: DayEnvelope): ValidationResult {
+export function validatePlan(plan: ZodDailyPlan, envelope: Envelope): ValidationResult {
   const reasons: string[] = [];
   let totalMinutes = 0;
   let hasTooHighIntensity = false;
+  let hasInvalidDrills = false;
 
-  for (const item of plan.items) {
-    totalMinutes += item.minutes;
-    if (intensityWeight[item.intensity] > intensityWeight[envelope.maxIntensity]) {
+  const validDrillIds = new Set(drillsData.drills.map(d => d.id));
+  const drillMap = new Map(drillsData.drills.map(d => [d.id, d]));
+
+  for (const block of plan.blocks) {
+    if (!validDrillIds.has(block.drill_id)) {
+      hasInvalidDrills = true;
+      reasons.push(`Unknown drill_id: ${block.drill_id}`);
+      continue;
+    }
+
+    const drillInfo = drillMap.get(block.drill_id)!;
+    
+    totalMinutes += block.minutes;
+    if (drillInfo.intensity > envelope.max_intensity) {
       hasTooHighIntensity = true;
     }
   }
 
-  if (totalMinutes > envelope.budgetMinutes) {
-    reasons.push(`Total minutes (${totalMinutes}) exceeds budget (${envelope.budgetMinutes})`);
+  if (totalMinutes > envelope.budget_minutes) {
+    reasons.push(`Total minutes (${totalMinutes}) exceeds budget (${envelope.budget_minutes})`);
   }
 
   if (hasTooHighIntensity) {
-    reasons.push(`Plan contains intensity higher than allowed (${envelope.maxIntensity})`);
+    reasons.push(`Plan contains intensity higher than allowed (${envelope.max_intensity})`);
   }
 
   if (reasons.length > 0) {
-    // Attempt repair:
-    // Simple repair: cut items until within budget, downgrade intensity
-    let repairedItems = plan.items.map(item => {
-      let newIntensity = item.intensity;
-      if (intensityWeight[item.intensity] > intensityWeight[envelope.maxIntensity]) {
-        newIntensity = envelope.maxIntensity;
-      }
-      return { ...item, intensity: newIntensity };
-    });
-
-    let currentMinutes = repairedItems.reduce((acc, item) => acc + item.minutes, 0);
-    while (currentMinutes > envelope.budgetMinutes && repairedItems.length > 0) {
-      const removed = repairedItems.pop();
+    // Basic repair
+    const repairedBlocks = plan.blocks
+      .filter(b => validDrillIds.has(b.drill_id))
+      .filter(b => drillMap.get(b.drill_id)!.intensity <= envelope.max_intensity);
+      
+    let currentMinutes = repairedBlocks.reduce((acc, b) => acc + b.minutes, 0);
+    while (currentMinutes > envelope.budget_minutes && repairedBlocks.length > 0) {
+      const removed = repairedBlocks.pop();
       if (removed) {
         currentMinutes -= removed.minutes;
       }
@@ -65,7 +59,10 @@ export function validatePlan(plan: DailyPlan, envelope: DayEnvelope): Validation
     return {
       valid: false,
       reasons,
-      repairedPlan: { items: repairedItems }
+      repairedPlan: { 
+        ...plan, 
+        blocks: repairedBlocks 
+      }
     };
   }
 

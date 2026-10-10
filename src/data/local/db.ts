@@ -1,6 +1,9 @@
 import Dexie, { Table } from 'dexie';
 
 export interface UserProfile {
+  sport: string;
+  city: string;
+  baselineResult?: string;
   id: number;
   displayName?: string;
   level: 'beginner' | 'intermediate' | 'advanced';
@@ -11,7 +14,10 @@ export interface UserProfile {
 export interface DayCheckin {
   dayKey: string;
   completed: boolean;
+  mood?: string;
+  eveningIfThen?: string;
   minutes: number;
+  screenSeconds?: number;
 }
 
 export interface StoredPlan {
@@ -35,3 +41,5 @@ export class BaharDB extends Dexie {
 }
 
 export const db = new BaharDB();
+
+

@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bahar
 
-## Getting Started
+Bahar is a resilient, offline-first training app designed to expect failure and build momentum.
 
-First, run the development server:
+## Data Practices & Privacy
+We believe health and training data is deeply personal.
+- **Local By Default**: Your baseline settings, daily plans, training history, and check-ins are saved exclusively on your device using IndexedDB (Dexie). They never leave your phone unless you explicitly choose to.
+- **Account is Optional**: You do not need to create an account to use the core application.
+- **Multiplayer/Buddies**: If you choose to sign in to pair with an accountability buddy or publish public training spots, only the minimally required data is synchronized to our server (Supabase).
+- **Data Export & Deletion**: A JSON export of your local database is available in the settings. You can delete all your data at any time with a single tap.
+- **AI Privacy**: We do not send your personal details to the AI model. The AI is only provided with your generalized intensity envelope (e.g., "medium intensity, 45 minutes").
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Stack
+- Next.js (App Router) + TypeScript
+- Dexie for Local-first Data
+- Supabase (Postgres + Auth + RLS)
+- Zod for Validation
+- Hosted Open-Weight AI fallback
+- Playwright & Vitest for Testing
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Features
+- Dynamic daily plans generated based on your streak and limits.
+- Background-resilient timers designed for mobile lock-screens.
+- Audio cues utilizing the native Browser Speech API.
+- Buddy pairing with strict Row Level Security.

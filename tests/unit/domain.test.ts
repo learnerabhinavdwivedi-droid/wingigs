@@ -6,51 +6,72 @@ import { calculateMomentum, Checkin } from '../../src/domain/progress/momentum';
 describe('Envelope Builder', () => {
   it('should restrict intensity for beginners', () => {
     const ctx: EnvelopeContext = {
-      baseline: { level: 'beginner', maxMinutesPerSession: 60, maxSessionsPerWeek: 3 },
-      daysActiveThisWeek: 1,
-      consecutiveDays: 0,
-      weatherIsBad: false
+      reading: { sleep: 'ok', energy: 2, soreness: 'none', time: 60, place: 'gym', flags: [] },
+      weather: null,
+      baseline: { id: 1, sport: 'badminton', city: 'Seattle', level: 'beginner', maxMinutesPerSession: 45, maxSessionsPerWeek: 3 },
+      streak: 1
     };
     const env = buildDayEnvelope(ctx);
-    expect(env.maxIntensity).toBe('medium');
-    expect(env.budgetMinutes).toBeLessThanOrEqual(45);
+    expect(env.max_intensity).toBe(2);
+    expect(env.budget_minutes).toBeLessThanOrEqual(45);
   });
 
-  it('should restrict intensity on consecutive days', () => {
+  it('should restrict intensity on soreness or fatigue', () => {
     const ctx: EnvelopeContext = {
-      baseline: { level: 'advanced', maxMinutesPerSession: 90, maxSessionsPerWeek: 5 },
-      daysActiveThisWeek: 2,
-      consecutiveDays: 2,
-      weatherIsBad: false
+      reading: { sleep: 'poor', energy: 1, soreness: 'some', time: 60, place: 'gym', flags: [] },
+      weather: null,
+      baseline: { id: 1, sport: 'badminton', city: 'Seattle', level: 'advanced', maxMinutesPerSession: 90, maxSessionsPerWeek: 5 },
+      streak: 2
     };
     const env = buildDayEnvelope(ctx);
-    expect(env.maxIntensity).toBe('low');
-    expect(env.budgetMinutes).toBeLessThanOrEqual(30);
+    expect(env.max_intensity).toBeLessThanOrEqual(2);
+    expect(env.budget_minutes).toBeLessThanOrEqual(30);
+    expect(env.mode).toBe('gentle');
   });
 });
 
 describe('Plan Validator', () => {
   it('should accept valid plans', () => {
     const plan: DailyPlan = {
-      items: [{ id: '1', name: 'Drill 1', minutes: 10, intensity: 'low' }]
+      headline: 'Drill Day',
+      why_this_plan: 'Consistent work',
+      advice: 'Stay relaxed',
+      blocks: [{ drill_id: 'b1', minutes: 10, cue: 'Clean footwork' }]
     };
-    const env = { maxIntensity: 'medium' as const, budgetMinutes: 30, environment: 'any' as const, allowedDrills: [] };
+    const env = {
+      allow_outdoor: true,
+      max_intensity: 2 as const,
+      budget_minutes: 30,
+      best_window: null,
+      mode: 'normal' as const,
+      reasons: []
+    };
     const result = validatePlan(plan, env);
     expect(result.valid).toBe(true);
   });
 
   it('should repair plans that exceed budget', () => {
     const plan: DailyPlan = {
-      items: [
-        { id: '1', name: 'Drill 1', minutes: 20, intensity: 'low' },
-        { id: '2', name: 'Drill 2', minutes: 20, intensity: 'low' }
+      headline: 'Over-budget plan',
+      why_this_plan: 'Exceeds budget test',
+      advice: 'Cut back',
+      blocks: [
+        { drill_id: 'b1', minutes: 20, cue: 'Shadow footwork' },
+        { drill_id: 'b2', minutes: 20, cue: 'Wall rally' }
       ]
     };
-    const env = { maxIntensity: 'low' as const, budgetMinutes: 30, environment: 'any' as const, allowedDrills: [] };
+    const env = {
+      allow_outdoor: true,
+      max_intensity: 2 as const,
+      budget_minutes: 30,
+      best_window: null,
+      mode: 'normal' as const,
+      reasons: []
+    };
     const result = validatePlan(plan, env);
     expect(result.valid).toBe(false);
-    expect(result.repairedPlan?.items.length).toBe(1);
-    expect(result.repairedPlan?.items[0].minutes).toBe(20);
+    expect(result.repairedPlan?.blocks.length).toBe(1);
+    expect(result.repairedPlan?.blocks[0].minutes).toBe(20);
   });
 });
 

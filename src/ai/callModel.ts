@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { ZodDailyPlan, DailyPlanSchema } from '../domain/schemas/plan';
 import { logAIFailure } from '../data/local/failure_log';
 
@@ -7,16 +8,17 @@ export interface AIModelResponse {
 
 export type TierFunction = (prompt: string, signal?: AbortSignal) => Promise<AIModelResponse>;
 
-export interface CallModelOptions {
+export interface CallModelOptions<T = ZodDailyPlan> {
   prompt: string;
   tier: 'hosted' | 'ollama' | 'ondevice';
   tierFn: TierFunction;
   promptVersion: string;
   timeoutMs?: number;
   retries?: number;
+  schema?: z.ZodType<T>;
 }
 
-export async function callModel(options: CallModelOptions): Promise<ZodDailyPlan> {
+export async function callModel<T = ZodDailyPlan>(options: CallModelOptions<T>): Promise<T> {
   const timeoutMs = options.timeoutMs || 20000; // 20s timeout by default
   const maxRetries = options.retries ?? 1;
   
@@ -49,7 +51,8 @@ export async function callModel(options: CallModelOptions): Promise<ZodDailyPlan
         throw new Error('parse_error');
       }
 
-      const result = DailyPlanSchema.safeParse(parsed);
+      const schema = (options.schema ?? DailyPlanSchema) as z.ZodType<T>;
+      const result = schema.safeParse(parsed);
       
       if (!result.success) {
         throw new Error('validation_failed');
@@ -91,3 +94,4 @@ export async function callModel(options: CallModelOptions): Promise<ZodDailyPlan
   
   throw new Error('Unreachable code');
 }
+

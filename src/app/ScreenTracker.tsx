@@ -1,0 +1,52 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { getDayKey } from '../domain/time/day_key';
+import { db } from '../data/local/db';
+
+export function ScreenTracker() {
+  const lastActiveRef = useRef<number>(Date.now());
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        const now = Date.now();
+        const diff = Math.floor((now - lastActiveRef.current) / 1000);
+        
+        if (diff > 0 && diff < 86400) {
+          const dayKey = getDayKey();
+          // Update screen seconds in IndexedDB directly
+          db.checkins.get(dayKey).then(checkin => {
+            if (checkin) {
+              db.checkins.update(dayKey, { 
+                screenSeconds: (checkin.screenSeconds || 0) + diff 
+              });
+            } else {
+              db.checkins.put({
+                dayKey,
+                completed: false,
+                minutes: 0,
+                screenSeconds: diff
+              });
+            }
+          });
+        }
+      } else {
+        lastActiveRef.current = Date.now();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    
+    // Also track on beforeunload
+    const handleUnload = () => handleVisibility();
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
+
+  return null;
+}

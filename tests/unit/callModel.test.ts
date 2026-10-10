@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { z } from 'zod';
 import { callModel, TierFunction } from '../../src/ai/callModel';
 import * as failureLog from '../../src/data/local/failure_log';
 
@@ -6,7 +7,10 @@ describe('callModel', () => {
   it('should parse valid JSON', async () => {
     const mockTier: TierFunction = async () => ({
       content: JSON.stringify({
-        items: [{ id: '1', name: 'Drill', minutes: 10, intensity: 'low' }]
+        headline: 'Footwork Drills',
+        why_this_plan: 'Stamina building',
+        advice: 'Keep light on toes',
+        blocks: [{ drill_id: 'b1', minutes: 10, cue: 'Shadow footwork' }]
       })
     });
     
@@ -17,8 +21,27 @@ describe('callModel', () => {
       promptVersion: 'v1'
     });
     
-    expect(result.items.length).toBe(1);
-    expect(result.items[0].name).toBe('Drill');
+    expect(result.blocks.length).toBe(1);
+    expect(result.blocks[0].drill_id).toBe('b1');
+  });
+
+  it('should parse valid JSON with custom schema', async () => {
+    const customSchema = z.object({
+      summary: z.string()
+    });
+    const mockTier: TierFunction = async () => ({
+      content: JSON.stringify({ summary: 'Great job' })
+    });
+    
+    const result = await callModel({
+      prompt: 'test',
+      tier: 'hosted',
+      tierFn: mockTier,
+      promptVersion: 'v1',
+      schema: customSchema
+    });
+    
+    expect(result.summary).toBe('Great job');
   });
 
   it('should throw and log on malformed JSON', async () => {

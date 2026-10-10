@@ -1,0 +1,32 @@
+{
+  "drills": [
+    {
+      "id": "b1",
+      "name": "Shadow Badminton",
+      "description": "Practice footwork without a shuttlecock.",
+      "intensity": 1,
+      "tags": ["footwork", "warmup"]
+    },
+    {
+      "id": "b2",
+      "name": "Wall Rally",
+      "description": "Hit the shuttle against a wall continuously.",
+      "intensity": 2,
+      "tags": ["reflexes", "control"]
+    },
+    {
+      "id": "b3",
+      "name": "High Clears",
+      "description": "Practice powerful overhead clears back to back.",
+      "intensity": 3,
+      "tags": ["power", "technique"]
+    },
+    {
+      "id": "b4",
+      "name": "Agility Ladder",
+      "description": "Fast footwork drills using an agility ladder.",
+      "intensity": 3,
+      "tags": ["footwork", "speed"]
+    }
+  ]
+}
