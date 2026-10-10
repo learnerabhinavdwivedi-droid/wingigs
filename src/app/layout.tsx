@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ServiceWorkerRegister } from "./ServiceWorkerRegister";
 import { ScreenTracker } from "./ScreenTracker";
+import { Navigation } from "./Navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bahar",
+  title: "Bahar - Resilient Athletic Training",
   description: "The resilient training app. Works offline, expects failure, builds momentum.",
   manifest: "/manifest.json",
   appleWebApp: {
@@ -42,9 +43,10 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
-      <body className="antialiased min-h-screen flex flex-col bg-gray-50">
+      <body className="antialiased min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-20">
         <ServiceWorkerRegister />
         <ScreenTracker />
+        <Navigation />
         {children}
       </body>
     </html>

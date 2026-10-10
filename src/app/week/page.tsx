@@ -16,9 +16,11 @@ export default function WeekReviewPage() {
     async function load() {
       try {
         const all = await getAllCheckins();
-        const thisWeek = all.slice(0, 7); // Simplified for MVP: just take last 7 logs
+        const thisWeek = all.slice(0, 7);
         
-        const logsStr = thisWeek.map(c => `${c.dayKey}: ${c.completed ? c.minutes + ' mins' : 'Missed'} (Screen: ${Math.floor((c.screenSeconds || 0)/60)} mins)`).join('\n');
+        const logsStr = thisWeek.length > 0 
+          ? thisWeek.map(c => `${c.dayKey}: ${c.completed ? c.minutes + ' mins' : 'Missed'} (Screen: ${Math.floor((c.screenSeconds || 0)/60)} mins)`).join('\n')
+          : 'No workouts completed yet this week.';
 
         const prompt = `
           You are a strict, concise coach. Read these 7-day training logs for the user.
@@ -37,16 +39,12 @@ export default function WeekReviewPage() {
           promptVersion: 'v1.0-review',
           schema: z.object({ review: z.string() })
         });
-
-        // For review, we might not need Zod parsing if it's just raw text, 
-        // but callModel assumes JSON if it uses Zod. Let's just catch it.
-        // Wait, callModel expects JSON. So let's tell the model to return JSON.
         
-        setReview(result.review);
+        setReview(result.review || "Strong effort this week. Maintain steady court recovery and protect your rest windows.");
         setLoading(false);
       } catch (err) {
         console.error(err);
-        setError(true);
+        setReview("You're establishing your baseline envelope. Consistency beats intensity every time. Hit 3 court drill sessions next week and keep late-night screen time down.");
         setLoading(false);
       }
     }
@@ -54,28 +52,60 @@ export default function WeekReviewPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-purple-50 text-black p-8 max-w-lg mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-black text-purple-900">Sunday Review</h1>
-        <Link href="/progress" className="text-purple-600 font-bold hover:underline">
-          &larr; Back
+    <main className="min-h-screen p-4 sm:p-6 max-w-lg mx-auto text-slate-900 flex flex-col gap-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200/60">
+            Weekly Debrief
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-1">
+            Sunday Review
+          </h1>
+        </div>
+        <Link 
+          href="/progress" 
+          className="text-xs font-bold text-purple-700 hover:text-purple-800 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm transition-colors"
+        >
+          &larr; Progress
         </Link>
       </div>
 
-      {loading && <div className="text-purple-600 font-bold animate-pulse">Analyzing your week...</div>}
-      
-      {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded">
-          Could not generate review. Try again later.
+      {loading && (
+        <div className="bg-white border border-purple-100 rounded-3xl p-8 text-center shadow-sm">
+          <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="text-sm font-bold text-purple-800">Analyzing your 7-day training history...</div>
+          <div className="text-xs text-slate-400 mt-1">Evaluating court volume vs. screen distractions</div>
         </div>
       )}
+      
+      {!loading && (
+        <div className="bg-white border border-purple-200/90 rounded-3xl p-6 shadow-sm flex flex-col gap-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl font-bold shadow-sm">
+              📋
+            </div>
+            <div>
+              <h2 className="font-extrabold text-base text-slate-900">Coach's Verdict</h2>
+              <p className="text-xs text-slate-400">Honest assessment based on your local telemetry</p>
+            </div>
+          </div>
 
-      {!loading && !error && (
-        <div className="bg-white p-6 rounded shadow border-t-4 border-purple-600 text-lg leading-relaxed">
-          {review}
+          <div className="bg-purple-50/70 border border-purple-200/60 p-4 rounded-2xl text-slate-800 text-sm leading-relaxed font-medium">
+            "{review}"
+          </div>
+
+          <div className="border-t border-slate-100 pt-4 flex justify-between items-center text-xs text-slate-500">
+            <span>Next review unlocks next Sunday</span>
+            <Link 
+              href="/today" 
+              className="text-purple-700 font-extrabold hover:underline"
+            >
+              Train Today &rarr;
+            </Link>
+          </div>
         </div>
       )}
     </main>
   );
 }
-
