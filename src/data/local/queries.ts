@@ -36,7 +36,6 @@ export async function savePlan(plan: StoredPlan): Promise<void> {
 }
 
 export async function getCompletedHistoricalPlans(): Promise<DailyPlan[]> {
-  const checkins = await db.checkins.where('completed').equals(1).toArray(); // Dexie boolean works or we just filter manually
   const allCheckins = await db.checkins.toArray();
   const completedKeys = allCheckins.filter(c => c.completed).map(c => c.dayKey);
   
