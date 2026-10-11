@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../data/remote/supabase';
+import { supabase, isSupabaseConfigured } from '../../data/remote/supabase';
 import Link from 'next/link';
 
 interface Spot {
@@ -74,6 +74,7 @@ export default function SpotsPage() {
 
   useEffect(() => {
     const fetchSpots = async () => {
+      if (!isSupabaseConfigured) return;
       try {
         const { data } = await supabase
           .from('spots')
@@ -112,18 +113,20 @@ export default function SpotsPage() {
       sport_tags: ['badminton']
     });
 
-    try {
-      await supabase.from('spots').insert([
-        {
-          name: created.name,
-          public_area: created.public_area,
-          city: created.city,
-          sport_tags: created.sport_tags,
-          tip: created.tip
-        }
-      ]);
-    } catch (err) {
-      // Local fallback preserved in state
+    if (isSupabaseConfigured) {
+      try {
+        await supabase.from('spots').insert([
+          {
+            name: created.name,
+            public_area: created.public_area,
+            city: created.city,
+            sport_tags: created.sport_tags,
+            tip: created.tip
+          }
+        ]);
+      } catch (err) {
+        // Local fallback preserved in state
+      }
     }
   };
 

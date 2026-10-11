@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../data/remote/supabase';
+import { supabase, isSupabaseConfigured } from '../../data/remote/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -35,6 +35,7 @@ export default function BuddyPage() {
 
   useEffect(() => {
     const fetchBuddies = async () => {
+      if (!isSupabaseConfigured) return;
       try {
         const { data } = await supabase
           .from('buddy_pairs')
@@ -80,16 +81,18 @@ export default function BuddyPage() {
     setLinking(false);
     setTimeout(() => setPairSuccess(null), 3500);
 
-    try {
-      await supabase.from('buddy_pairs').insert([
-        {
-          partner_name: newBuddy.partner_name,
-          slot_days: newBuddy.slot_days,
-          slot_time: newBuddy.slot_time
-        }
-      ]);
-    } catch (err) {
-      // Local state preserved
+    if (isSupabaseConfigured) {
+      try {
+        await supabase.from('buddy_pairs').insert([
+          {
+            partner_name: newBuddy.partner_name,
+            slot_days: newBuddy.slot_days,
+            slot_time: newBuddy.slot_time
+          }
+        ]);
+      } catch (err) {
+        // Local state preserved
+      }
     }
   };
 
