@@ -9,8 +9,8 @@ export function Navigation() {
   const pathname = usePathname();
   const [showSettings, setShowSettings] = useState(false);
 
-  // Hide global navigation on workout screen, onboarding, and marketing for focused experience
-  if (pathname === '/outside' || pathname === '/onboarding' || pathname === '/') {
+  // Hide global navigation on active outside workout screen and marketing landing page
+  if (pathname === '/outside' || pathname === '/') {
     return null;
   }
 
