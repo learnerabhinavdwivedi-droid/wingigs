@@ -6,6 +6,7 @@ import { ScreenTracker } from "./ScreenTracker";
 import { Navigation } from "./Navigation";
 import { PWAInstallBanner } from "../components/PWAInstallBanner";
 import { ThemeProvider } from "../context/ThemeContext";
+import { AuthProvider } from "../context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,13 +66,15 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-lime-400 selection:text-slate-950 pb-20 md:pb-8 transition-colors duration-200">
         <ThemeProvider>
-          <ServiceWorkerRegister />
-          <ScreenTracker />
-          <Navigation />
-          <div className="flex-1 w-full">
-            {children}
-          </div>
-          <PWAInstallBanner />
+          <AuthProvider>
+            <ServiceWorkerRegister />
+            <ScreenTracker />
+            <Navigation />
+            <div className="flex-1 w-full">
+              {children}
+            </div>
+            <PWAInstallBanner />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

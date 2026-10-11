@@ -5,10 +5,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SettingsModal } from '../components/SettingsModal';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { useAuth } from '../context/AuthContext';
+import { AuthModal } from '../components/AuthModal';
+import { DownloadAppModal } from '../components/DownloadAppModal';
 
 export function Navigation() {
   const pathname = usePathname();
+  const { user } = useAuth();
   const [showSettings, setShowSettings] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   // Hide global navigation on active outside workout screen and marketing landing page
   if (pathname === '/outside' || pathname === '/') {
@@ -160,11 +166,53 @@ export function Navigation() {
               </Link>
             </div>
 
-            {/* Live Local Database & Offline Readiness Indicator */}
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300" title="100% Local IndexedDB Vault Active">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
-              <span>Offline Ready</span>
-            </div>
+            {/* Download App Button */}
+            <button
+              type="button"
+              onClick={() => setShowDownloadModal(true)}
+              className="py-1.5 px-3 rounded-xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-black text-xs transition-all shadow-md shadow-lime-400/20 active:scale-95 flex items-center gap-1.5"
+              title="Download & Install Bahar App"
+              aria-label="Download App"
+            >
+              <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span className="hidden sm:inline">Download App</span>
+              <span className="sm:hidden">App</span>
+            </button>
+
+            {/* Athlete Authentication */}
+            {user ? (
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(true)}
+                className="py-1 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-lime-500/50 text-slate-800 dark:text-slate-200 transition-all flex items-center gap-1.5 shadow-sm"
+                title="Manage Athlete Account"
+                aria-label="Account"
+              >
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-lime-400 to-emerald-400 text-slate-950 flex items-center justify-center font-black text-xs shadow-sm">
+                  {user.displayName ? user.displayName.charAt(0).toUpperCase() : '🏸'}
+                </div>
+                <span className="text-xs font-bold hidden md:inline max-w-[85px] truncate">
+                  {user.displayName || user.email.split('@')[0]}
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(true)}
+                className="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                aria-label="Sign in"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span className="hidden sm:inline">Sign In</span>
+              </button>
+            )}
 
             {/* Global Theme Toggle */}
             <ThemeToggle />
@@ -176,8 +224,11 @@ export function Navigation() {
               title="Settings & Data Management"
               aria-label="Settings"
             >
-              <span className="text-sm">⚙️</span>
-              <span className="text-xs font-bold hidden lg:inline">Vault & Settings</span>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+              <span className="text-xs font-bold hidden lg:inline">Settings</span>
             </button>
           </div>
         </div>
@@ -216,6 +267,18 @@ export function Navigation() {
       <SettingsModal 
         isOpen={showSettings} 
         onClose={() => setShowSettings(false)} 
+      />
+
+      {/* Athlete Authentication Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
+
+      {/* Download & Install PWA Modal */}
+      <DownloadAppModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
       />
     </>
   );

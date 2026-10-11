@@ -22,12 +22,13 @@ test.describe('Bahar Comprehensive Runtime Verification', () => {
     const startBtn = page.getByRole('button', { name: /start training/i });
     if (await startBtn.isVisible()) {
       await startBtn.click();
-      await page.waitForURL('/today', { timeout: 20000 }).catch(() => {});
+      await page.waitForURL('/today', { timeout: 30000 });
+    } else {
+      await page.goto('/today', { waitUntil: 'domcontentloaded' });
     }
 
     // 3. Today Page
-    await page.goto('/today', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByText("Today's Plan")).toBeVisible();
+    await expect(page.getByText("Today's Plan")).toBeVisible({ timeout: 35000 });
 
     // 4. Spots Directory
     await page.goto('/spots', { waitUntil: 'domcontentloaded' });

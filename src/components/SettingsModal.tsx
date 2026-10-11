@@ -17,6 +17,8 @@ import { playAudioCue, unlockAudio } from '../features/outside-mode/audio';
 import { useRouter } from 'next/navigation';
 import { HabitReminderSection } from './HabitReminderSection';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { AuthModal } from './AuthModal';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -27,6 +29,8 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { theme, setTheme } = useTheme();
+  const { user, signOut: authSignOut, isSupabaseConnected } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [sport, setSport] = useState('badminton');
@@ -219,6 +223,73 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <span>System</span>
               </button>
             </div>
+          </div>
+
+          {/* Athlete Account & Cloud Authentication */}
+          <div className="bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-300">
+                Athlete Account & Sync
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                <span className={`w-1.5 h-1.5 rounded-full ${isSupabaseConnected ? 'bg-emerald-500 animate-pulse' : 'bg-lime-500'}`} />
+                {user ? (user.isAnonymous ? 'Guest Athlete' : 'Cloud Member') : 'Local Mode'}
+              </span>
+            </div>
+
+            {user ? (
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-lime-400 to-emerald-400 text-slate-950 flex items-center justify-center font-black text-xs shrink-0 shadow-sm">
+                    {user.displayName ? user.displayName.charAt(0).toUpperCase() : '🏸'}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-white truncate">
+                      {user.displayName || 'Athlete'}
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                      {user.email}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowAuthModal(true)}
+                    className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    Manage
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await authSignOut();
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 pt-1">
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Sign in or create an account to synchronize streaks and buddy pairings across devices.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowAuthModal(true)}
+                  className="w-full py-2.5 px-4 rounded-xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-black text-xs transition-all shadow-md shadow-lime-400/20 active:scale-[0.99] flex items-center justify-center gap-2"
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span>Sign In / Create Athlete Account</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Profile Quick Edit */}
@@ -459,6 +530,11 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           </button>
         </div>
       </div>
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
     </div>
   );
 }
