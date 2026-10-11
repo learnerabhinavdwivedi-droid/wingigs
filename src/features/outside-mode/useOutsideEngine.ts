@@ -122,6 +122,7 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
 
   return {
     state,
+    blockIndex,
     currentBlock,
     elapsedFormatted: formatTime(accumulatedSeconds),
     remainingFormatted: formatTime(remainingSecondsForBlock),

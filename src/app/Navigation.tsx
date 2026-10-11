@@ -159,6 +159,12 @@ export function Navigation() {
               </Link>
             </div>
 
+            {/* Live Local Database & Offline Readiness Indicator */}
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] font-semibold text-slate-300" title="100% Local IndexedDB Vault Active">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
+              <span>Offline Ready</span>
+            </div>
+
             {/* Settings Trigger Modal Button */}
             <button
               onClick={() => setShowSettings(true)}

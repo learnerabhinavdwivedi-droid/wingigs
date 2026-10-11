@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDayEngine } from '../../features/day-engine/useDayEngine';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -14,6 +14,20 @@ export default function TodayPage() {
   const [showCheckin, setShowCheckin] = useState(false);
   const [activeDrillModal, setActiveDrillModal] = useState<any>(null);
   const [playingCue, setPlayingCue] = useState(false);
+  const [showWarmup, setShowWarmup] = useState(false);
+  
+  // State for Movement Prep Warmup Checklist
+  const [warmupDone, setWarmupDone] = useState<{ [key: string]: boolean }>({
+    ankles: false,
+    hips: false,
+    racket: false
+  });
+  
+  const toggleWarmup = (key: string) => {
+    setWarmupDone(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const allWarmupDone = warmupDone.ankles && warmupDone.hips && warmupDone.racket;
   
   // State for Reading
   const [reading, setReading] = useState<Reading>({
@@ -24,6 +38,52 @@ export default function TodayPage() {
     place: 'gym',
     flags: []
   });
+
+  // Calculate 0-100% Athletic Readiness & Recovery Capacity
+  const readinessScore = useMemo(() => {
+    let score = 50;
+    if (reading.sleep === 'good') score += 25;
+    else if (reading.sleep === 'ok') score += 15;
+    else score += 0;
+
+    if (reading.energy === 3) score += 25;
+    else if (reading.energy === 2) score += 15;
+    else score += 5;
+
+    if (reading.soreness === 'none') score += 0;
+    else if (reading.soreness === 'some') score -= 15;
+    else if (reading.soreness === 'pain') score -= 30;
+
+    return Math.max(15, Math.min(100, score));
+  }, [reading.sleep, reading.energy, reading.soreness]);
+
+  const readinessStatus = useMemo(() => {
+    if (readinessScore >= 80) {
+      return { 
+        label: 'Optimal Capacity', 
+        color: 'text-lime-400', 
+        bg: 'bg-lime-400/10', 
+        border: 'border-lime-400/30', 
+        note: 'Envelope unlocked for full anaerobic court speed and maximal intensity.' 
+      };
+    }
+    if (readinessScore >= 55) {
+      return { 
+        label: 'Balanced Pacing', 
+        color: 'text-amber-400', 
+        bg: 'bg-amber-400/10', 
+        border: 'border-amber-400/30', 
+        note: 'Moderate capacity envelope active. Focus on smooth footwork mechanics.' 
+      };
+    }
+    return { 
+      label: 'Active Recovery Throttling', 
+      color: 'text-rose-400', 
+      bg: 'bg-rose-400/10', 
+      border: 'border-rose-400/30', 
+      note: 'Protective throttling engaged to safeguard joints and prevent soft-tissue strain.' 
+    };
+  }, [readinessScore]);
 
   useEffect(() => {
     if (state === 'no_profile') {
@@ -169,6 +229,77 @@ export default function TodayPage() {
                 </button>
               </div>
 
+              {/* 3-Minute Movement Prep Warmup Checklist */}
+              <div className="mb-6 p-4 rounded-2xl border border-slate-800 bg-slate-950/70 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">{allWarmupDone ? '🔥' : '⚡'}</span>
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-lime-400 block">
+                        Court Warmup
+                      </span>
+                      <h3 className="text-sm font-black text-white">
+                        3-Minute Movement Prep
+                      </h3>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowWarmup(!showWarmup)}
+                    className="text-[11px] font-bold text-slate-400 hover:text-white px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800"
+                  >
+                    {showWarmup ? 'Collapse' : allWarmupDone ? '✅ Primed (3/3)' : 'Open Routine (3 Drills)'}
+                  </button>
+                </div>
+
+                {allWarmupDone && !showWarmup && (
+                  <div className="p-2.5 rounded-xl bg-lime-400/10 border border-lime-400/20 text-lime-400 text-xs font-bold flex items-center gap-2">
+                    <span>✨</span>
+                    <span>Court Primed! Neuromuscular system ready for high-velocity drills.</span>
+                  </div>
+                )}
+
+                {showWarmup && (
+                  <div className="mt-3 space-y-2 pt-2 border-t border-slate-800/80">
+                    {[
+                      { id: 'ankles', label: 'Achilles & Ankle Primers', time: '60s', desc: 'Gentle low-amplitude pogo hops & calf spring activation' },
+                      { id: 'hips', label: 'Lateral Lunges & Hip Flow', time: '60s', desc: 'Dynamic deep adductor shifts & groin openers' },
+                      { id: 'racket', label: 'Shoulder & Racket Shadow Swings', time: '60s', desc: 'Full range scapular rotations & wrist snap acceleration' }
+                    ].map(prep => {
+                      const isDone = warmupDone[prep.id];
+                      return (
+                        <div
+                          key={prep.id}
+                          onClick={() => toggleWarmup(prep.id)}
+                          className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                            isDone
+                              ? 'bg-lime-400/10 border-lime-400/30 text-white'
+                              : 'bg-slate-900/40 border-slate-800/60 text-slate-300 hover:border-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-lg border flex items-center justify-center text-xs font-bold ${
+                              isDone ? 'bg-lime-400 border-lime-400 text-slate-950' : 'border-slate-700 bg-slate-950 text-transparent'
+                            }`}>
+                              ✓
+                            </div>
+                            <div>
+                              <div className={`font-bold text-xs ${isDone ? 'line-through text-slate-400' : 'text-white'}`}>
+                                {prep.label}
+                              </div>
+                              <div className="text-[10px] text-slate-500">{prep.desc}</div>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-black text-lime-400 bg-lime-400/10 px-2 py-0.5 rounded-md border border-lime-400/20">
+                            {prep.time}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {/* Drill Blocks List */}
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -273,6 +404,53 @@ export default function TodayPage() {
               </p>
             </div>
           )}
+
+          {/* Athletic Readiness & Physical Capacity Gauge */}
+          <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 shadow-xl backdrop-blur-sm">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-400">
+                Physical Capacity Gauge
+              </span>
+              <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${readinessStatus.bg} ${readinessStatus.color} ${readinessStatus.border}`}>
+                {readinessStatus.label}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 mb-3">
+              <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
+                <svg className="w-16 h-16 transform -rotate-90">
+                  <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-slate-800" />
+                  <circle
+                    cx="32" cy="32" r="26"
+                    stroke="currentColor" strokeWidth="6" fill="transparent"
+                    className={`${readinessScore >= 80 ? 'text-lime-400' : readinessScore >= 55 ? 'text-amber-400' : 'text-rose-400'} transition-all duration-700`}
+                    strokeDasharray={2 * Math.PI * 26}
+                    strokeDashoffset={2 * Math.PI * 26 * (1 - readinessScore / 100)}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="absolute font-mono font-black text-sm text-white">
+                  {readinessScore}%
+                </span>
+              </div>
+
+              <div>
+                <div className="text-xs font-extrabold text-white mb-0.5">
+                  Readiness: <span className={readinessStatus.color}>{readinessScore}/100</span>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-snug">
+                  {readinessStatus.note}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${readinessScore >= 80 ? 'bg-lime-400' : readinessScore >= 55 ? 'bg-amber-400' : 'bg-rose-400'}`}
+                style={{ width: `${readinessScore}%` }}
+              />
+            </div>
+          </div>
 
           {/* Daily Check-in Form Card (Expandable or always visible on desktop) */}
           {(showCheckin || true) && (

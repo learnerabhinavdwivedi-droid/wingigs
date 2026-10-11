@@ -14,13 +14,14 @@ export default function OutsidePage() {
   const router = useRouter();
   const { plan, state: engineState } = useDayEngine();
   const {
-    state, currentBlock, elapsedFormatted, remainingFormatted, progressPercent,
+    state, blockIndex, currentBlock, elapsedFormatted, remainingFormatted, progressPercent,
     start, pause, resume, handleNext
   } = useOutsideEngine(plan);
 
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const [showDrillList, setShowDrillList] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
+  const [audioCoachEnabled, setAudioCoachEnabled] = useState(true);
   const wakeLockRef = useRef<any>(null);
 
   useEffect(() => {
@@ -164,10 +165,19 @@ export default function OutsidePage() {
               ☀️ Screen Awake
             </span>
           )}
-          <span className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-lime-400/10 border border-lime-400/20 text-lime-400">
-            <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
-            Audio Coach On
-          </span>
+          <button
+            type="button"
+            onClick={() => setAudioCoachEnabled(!audioCoachEnabled)}
+            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full transition-all border ${
+              audioCoachEnabled
+                ? 'bg-lime-400/10 border-lime-400/20 text-lime-400'
+                : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-400'
+            }`}
+            title="Toggle Audio Cues & Whistle"
+          >
+            <span className={`w-2 h-2 rounded-full ${audioCoachEnabled ? 'bg-lime-400 animate-pulse' : 'bg-slate-600'}`} />
+            <span>{audioCoachEnabled ? 'Audio Coach On' : 'Audio Muted'}</span>
+          </button>
           <button
             onClick={() => setShowDrillList(!showDrillList)}
             className="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors"
@@ -182,6 +192,32 @@ export default function OutsidePage() {
         
         {/* Drill Info Card */}
         <div className="w-full max-w-md text-center lg:text-left flex flex-col items-center lg:items-start">
+          
+          {/* Circuit Stepper Track */}
+          <div className="flex items-center gap-2 mb-3 bg-slate-900/80 border border-slate-800/80 px-3.5 py-1.5 rounded-full">
+            <div className="flex items-center gap-1.5">
+              {plan.blocks.map((_, idx) => {
+                const isPast = (blockIndex ?? 0) > idx;
+                const isCurrent = (blockIndex ?? 0) === idx;
+                return (
+                  <span
+                    key={idx}
+                    className={`transition-all rounded-full ${
+                      isCurrent
+                        ? 'w-5 h-2 bg-lime-400 shadow-[0_0_10px_rgba(132,204,22,0.9)]'
+                        : isPast
+                          ? 'w-2 h-2 bg-lime-500/60'
+                          : 'w-2 h-2 bg-slate-800'
+                    }`}
+                  />
+                );
+              })}
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 border-l border-slate-800 pl-2">
+              Drill {(blockIndex ?? 0) + 1} of {plan.blocks.length}
+            </span>
+          </div>
+
           <span className="text-xs font-black tracking-widest uppercase text-lime-400 bg-lime-400/10 border border-lime-400/20 px-3 py-1 rounded-full">
             Current Drill
           </span>
@@ -203,7 +239,12 @@ export default function OutsidePage() {
 
         {/* High-visibility Responsive Timer Circle */}
         <div className="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center shrink-0">
-          <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+          {/* Ambient Breathing Neon Halo Glow */}
+          {state === 'running' && (
+            <div className="absolute inset-2 rounded-full bg-lime-400/15 blur-2xl animate-pulse pointer-events-none" />
+          )}
+
+          <svg className={`absolute inset-0 w-full h-full transform -rotate-90 ${state === 'running' ? 'filter drop-shadow-[0_0_20px_rgba(132,204,22,0.35)]' : ''}`}>
             <circle 
               cx="50%" cy="50%" r="42%" 
               stroke="currentColor" 

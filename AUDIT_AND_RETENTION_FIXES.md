@@ -120,3 +120,38 @@ habit reminder     guilt tracker   no shareable badges        shaming metrics
    - Enable an opt-in "3-Session Weekly Challenge" where buddies track mutual completion meters in `/buddy`.
 4. **Vercel / Cloudflare Edge Deployment**:
    - Connect the GitHub repository directly to Vercel or Cloudflare Pages for instant automatic preview deployments on every push.
+
+---
+
+## 5. UI/UX MAX PRO Athletic Enhancements Implemented
+
+To elevate Bahar from a functional tool into an elite-tier athletic training companion, the following "MAX PRO" user experience upgrades were designed and integrated:
+
+### 1. 1-Tap Athletic Archetypes & Live Physical Forecast (`OnboardingForm.tsx`)
+* **3-Second Fast-Track Setup**: Added 3 athletic preset archetypes:
+  - ⚡ **Daily Grinder**: Badminton • Intermediate • 30m • 4 sessions/wk ("High-frequency stamina & agility")
+  - 🏸 **Court Explorer**: Badminton • Beginner • 15m • 3 sessions/wk ("Fast start & low friction")
+  - 🛡️ **Comeback / Reset**: Bodyweight • Beginner • 15m • 2 sessions/wk ("Joint restoration & low impact")
+* **Real-Time Physical Forecast Card**: Dynamically calculates and previews circuit drill count, estimated calorie burn, and recovery shield window in real time as sliders and levels adjust.
+
+### 2. Physical Capacity & Daily Readiness Gauge (`today/page.tsx`)
+* **0–100% Bio-Envelope Gauge**: Combines sleep quality, current energy level, and muscular soreness into a high-visibility capacity ring and status badge:
+  - **Optimal Capacity ($\ge 80\%$)**: Unlocked for maximal anaerobic power and speed.
+  - **Balanced Pacing ($55-79\%$)**: Standard aerobic volume with steady recovery buffers.
+  - **Active Recovery ($< 55\%$)**: Protective throttling engaged to safeguard joints and tendons.
+
+### 3. 3-Minute Movement Prep Warmup Checklist (`today/page.tsx`)
+* **Interactive Court Warmup Ritual**: An expandable 3-exercise movement checklist:
+  - 🦶 **Achilles & Ankle Primers** (60s gentle low-amplitude bounding)
+  - 🏃 **Lateral Lunges & Hip Flow** (60s dynamic adductor/groin shifts)
+  - 🏸 **Shoulder & Racket Shadow Swings** (60s scapular rotation and wrist snap acceleration)
+* **Court Primed Confirmation**: Displays celebratory notification and primes the athlete before entering active drill mode.
+
+### 4. Workout Player Halo Pulse & Circuit Stepper (`outside/page.tsx`)
+* **Breathing Neon Lime Halo**: The timer ring pulses with an energetic ambient neon glow during active drill intervals.
+* **Circuit Stepper Breadcrumb Track**: Step dots (`● ● ○`) display drill progress (`Drill X of Y`) across the workout.
+* **Audio Coach Mute/Unmute Toggle**: Instant header toggle allows athletes in quiet court facilities or noisy music environments to switch audio cues on or off.
+
+### 5. Offline Vault Live Indicator (`Navigation.tsx`)
+* **"Offline Ready 🟢" Micro-Badge**: Prominent header indicator providing visual assurance of 100% local IndexedDB offline storage and zero cloud tracking.
+

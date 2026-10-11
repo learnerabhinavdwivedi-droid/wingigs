@@ -162,6 +162,46 @@ export function OnboardingForm() {
   const [baselineTask, setBaselineTask] = useState<string | null>(null);
   const [baselineResult, setBaselineResult] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedArchetype, setSelectedArchetype] = useState<string | null>(null);
+
+  const archetypes = [
+    {
+      id: 'grinder',
+      name: 'Daily Grinder',
+      icon: '⚡',
+      badge: 'Stamina & Agility',
+      sport: 'badminton',
+      level: 'intermediate' as const,
+      minutes: 30,
+      sessions: 4,
+      city: 'Seattle',
+      tagline: 'High-frequency court footwork & rally reaction'
+    },
+    {
+      id: 'explorer',
+      name: 'Court Explorer',
+      icon: '🏸',
+      badge: 'Fast Start',
+      sport: 'badminton',
+      level: 'beginner' as const,
+      minutes: 15,
+      sessions: 3,
+      city: 'Seattle',
+      tagline: 'Low-friction habit building with basic court positioning'
+    },
+    {
+      id: 'comeback',
+      name: 'Comeback / Reset',
+      icon: '🛡️',
+      badge: 'Low Impact',
+      sport: 'calisthenics',
+      level: 'beginner' as const,
+      minutes: 15,
+      sessions: 2,
+      city: 'Seattle',
+      tagline: 'Joint restoration, dynamic mobility & tendon prep'
+    }
+  ];
 
   // Micro-interaction: dynamic weather & AQI preview based on city
   const weatherPreview = useMemo(() => {
@@ -330,6 +370,65 @@ export function OnboardingForm() {
       {step === 1 ? (
         <form onSubmit={handleProfileSubmit} className="flex flex-col gap-6">
           
+          {/* Quick 1-Tap Athletic Archetypes (Instant 3-Sec Setup) */}
+          <div className={`p-4 rounded-3xl border transition-all ${
+            isDark ? 'bg-slate-900/40 border-slate-800/80' : 'bg-slate-50 border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-lime-400 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                1-Tap Athletic Archetypes
+              </span>
+              <span className="text-[10px] font-bold text-slate-400">
+                Quick Setup
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {archetypes.map(arch => {
+                const isSelected = selectedArchetype === arch.id;
+                return (
+                  <button
+                    key={arch.id}
+                    type="button"
+                    onClick={() => {
+                      setProfile({
+                        sport: arch.sport,
+                        level: arch.level,
+                        maxMinutesPerSession: arch.minutes,
+                        maxSessionsPerWeek: arch.sessions,
+                        city: arch.city
+                      });
+                      setSelectedArchetype(arch.id);
+                    }}
+                    className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                      isSelected
+                        ? isDark
+                          ? 'bg-lime-400/15 border-lime-400 text-white ring-1 ring-lime-400 shadow-md shadow-lime-500/10'
+                          : 'bg-lime-50 border-lime-600 text-slate-950 ring-1 ring-lime-600 shadow-sm'
+                        : isDark
+                          ? 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-900/60'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/80'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-base">{arch.icon}</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-lime-400 bg-lime-400/10 px-1.5 py-0.5 rounded-md">
+                          {arch.minutes}m • {arch.sessions}x
+                        </span>
+                      </div>
+                      <div className="font-black text-xs tracking-tight text-white">{arch.name}</div>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-1">
+                        {arch.tagline}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* 1. Primary Sport Selection */}
           <div>
             <div className="flex items-center justify-between mb-2.5">
@@ -572,6 +671,35 @@ export function OnboardingForm() {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Live Real-Time Physical Forecast */}
+            <div className={`mt-3 p-3.5 rounded-2xl border text-xs transition-all ${
+              isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-lime-400 flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5" />
+                  Live Physical Forecast
+                </span>
+                <span className="text-[10px] font-bold text-slate-400">
+                  {profile.maxSessionsPerWeek}x / week commitment
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className={`p-2 rounded-xl ${isDark ? 'bg-slate-950/70 border border-slate-850' : 'bg-white border border-slate-200'}`}>
+                  <div className="text-sm sm:text-base font-black text-white">{Math.max(2, Math.round(profile.maxMinutesPerSession / 10))} Drills</div>
+                  <div className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Circuit Load</div>
+                </div>
+                <div className={`p-2 rounded-xl ${isDark ? 'bg-slate-950/70 border border-slate-850' : 'bg-white border border-slate-200'}`}>
+                  <div className="text-sm sm:text-base font-black text-lime-400">~{Math.round(profile.maxMinutesPerSession * 6.5)} kcal</div>
+                  <div className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Est. Burn</div>
+                </div>
+                <div className={`p-2 rounded-xl ${isDark ? 'bg-slate-950/70 border border-slate-850' : 'bg-white border border-slate-200'}`}>
+                  <div className="text-sm sm:text-base font-black text-sky-400">{profile.level === 'advanced' ? '36h' : '24h'}</div>
+                  <div className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Recovery Shield</div>
+                </div>
+              </div>
             </div>
           </div>
 
