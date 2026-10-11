@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { saveProfile } from '../../data/local/queries';
 import { callModel } from '../../ai/callModel';
 import { hostedTier } from '../../ai/tiers/hosted';
+import { buildBaselinePrompt } from '../../ai/prompts';
 import { z } from 'zod';
 
 function MapPin({ className = "w-4 h-4" }: { className?: string }) {
@@ -228,11 +229,12 @@ export function OnboardingForm() {
     setLoading(true);
     
     try {
+      const payload = buildBaselinePrompt(profile.sport, profile.level, profile.city || 'Seattle');
       const res = await callModel({
-        prompt: `The user is a ${profile.level} at ${profile.sport} in ${profile.city}. Give them ONE simple 5-minute baseline physical test to do right now to gauge their fitness. Format as JSON: { "test": "description" }`,
+        prompt: payload.userPrompt,
         tier: 'hosted',
         tierFn: hostedTier,
-        promptVersion: 'v1-baseline',
+        promptVersion: 'v2.0-baseline',
         schema: z.object({ test: z.string() })
       });
       setBaselineTask(res.test);

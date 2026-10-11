@@ -1,12 +1,32 @@
 {
     "name": "bahar",
-    "version": "0.1.0",
-    "private": true,
+    "version": "1.0.0",
+    "description": "The failure-tolerant athletic training engine. Offline-first PWA with dynamic court envelopes, audio coach, and local IndexedDB vault.",
+    "private": false,
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/learnerabhinavdwivedi-droid/wingigs.git"
+    },
+    "keywords": [
+        "badminton",
+        "athletic-training",
+        "offline-first",
+        "pwa",
+        "nextjs",
+        "dexie",
+        "indexeddb",
+        "supabase",
+        "sports-science",
+        "tailwind-css"
+    ],
     "scripts": {
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
         "lint": "eslint",
+        "typecheck": "tsc --noEmit",
+        "test": "npm run test:unit",
         "test:unit": "vitest run",
         "test:e2e": "playwright test"
     },

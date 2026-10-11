@@ -25,6 +25,32 @@ describe('callModel', () => {
     expect(result.blocks[0].drill_id).toBe('b1');
   });
 
+  it('should parse JSON embedded in chatty open-weight model responses', async () => {
+    const mockTier: TierFunction = async () => ({
+      content: `Here is your badminton training plan for today:
+\`\`\`json
+{
+  "headline": "Dynamic Court Agility",
+  "why_this_plan": "Matches high recovery capacity",
+  "advice": "Stay light on feet",
+  "blocks": [{ "drill_id": "b1", "minutes": 15, "cue": "Quick return to base" }]
+}
+\`\`\`
+Hope you have a productive session on the court!`
+    });
+
+    const result = await callModel({
+      prompt: 'test',
+      tier: 'hosted',
+      tierFn: mockTier,
+      promptVersion: 'v2'
+    });
+
+    expect(result.headline).toBe('Dynamic Court Agility');
+    expect(result.blocks.length).toBe(1);
+    expect(result.blocks[0].drill_id).toBe('b1');
+  });
+
   it('should parse valid JSON with custom schema', async () => {
     const customSchema = z.object({
       summary: z.string()

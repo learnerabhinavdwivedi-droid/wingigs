@@ -11,6 +11,8 @@ import { getFallbackPlan } from '../../data/fallback/bank';
 import { validatePlan } from '../../domain/validator/planValidator';
 import { UserProfile } from '../../data/local/db';
 import { Reading, ZodDailyPlan } from '../../domain/schemas/plan';
+import { getRealWeather } from '../weather/getWeather';
+import { buildPlanPrompt } from '../../ai/prompts';
 
 export type DayEngineState = 'loading' | 'no_profile' | 'needs_reading' | 'generating' | 'ready' | 'error';
 
@@ -28,9 +30,12 @@ export function useDayEngine() {
       const allCheckins = await getAllCheckins();
       const streak = calculateMomentum(allCheckins, todayKey);
       
+      // Fetch live open weather and AQI for the athlete's training city
+      const weather = await getRealWeather(targetProfile.city);
+
       const ctx: EnvelopeContext = {
         reading,
-        weather: { aqi: 45, temperature: 20, precipitation: 0, visibility: 10 }, // mock
+        weather,
         baseline: targetProfile,
         streak,
         obstacle
@@ -43,17 +48,18 @@ export function useDayEngine() {
       let newPlan: ZodDailyPlan;
       
       try {
+        const promptPayload = buildPlanPrompt(env, obstacle);
         const generated = await callModel({
-          prompt: `Generate a badminton plan. Mode: ${env.mode}. Max intensity: ${env.max_intensity}, max minutes: ${env.budget_minutes}`,
+          prompt: promptPayload.userPrompt,
           tier: 'hosted',
           tierFn: hostedTier,
-          promptVersion: 'v1.1'
+          promptVersion: 'v2.0-openweight'
         });
 
         const validation = validatePlan(generated, env);
         newPlan = validation.valid ? generated : (validation.repairedPlan || getFallbackPlan(env, pastPlans));
       } catch (error) {
-        console.error("AI failed, using fallback", error);
+        console.warn("AI generation offline or unconfigured, using vetted fallback plan", error);
         newPlan = getFallbackPlan(env, pastPlans);
       }
 

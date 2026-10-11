@@ -91,41 +91,27 @@ habit reminder     guilt tracker   no shareable badges        shaming metrics
 
 ## 3. Implemented Fixes Summary
 
-| File | Fix Description | Impact on Retention |
+| Component / Subsystem | Repository Path | Architectural & Retention Impact |
 | :--- | :--- | :--- |
-| [`src/domain/progress/momentum.ts`](file:///d:/wingigs/bahar/src/domain/progress/momentum.ts) | Implemented `calculateResilientMomentum` with Recovery Shield (1-day rest buffer) and weekly consistency targets. | Critical: Turns failure-tolerance into a core retention game mechanic. |
-| [`src/components/HabitReminderSection.tsx`](file:///d:/wingigs/bahar/src/components/HabitReminderSection.tsx) | Daily training habit anchor, Web Notification push alert, 1-tap Google Calendar & Apple .ICS sync. | High: Solves the external habit trigger problem. |
-| [`src/app/buddy/page.tsx`](file:///d:/wingigs/bahar/src/app/buddy/page.tsx) | Added Weekly Consistency Duel (You vs Partner) + WhatsApp deep-link sharing. | High: Facilitates peer invitation and retention duels. |
-| [`src/features/outside-mode/audio.ts`](file:///d:/wingigs/bahar/src/features/outside-mode/audio.ts) | Added native Web Audio oscillators for whistles, countdown pips, and victory chords. | High: Audible in wind and gym environments without interrupting music. |
-| [`src/features/outside-mode/useOutsideEngine.ts`](file:///d:/wingigs/bahar/src/features/outside-mode/useOutsideEngine.ts) | Added 3-second countdown audio cues and start whistles. | High: Enhances athletic interval precision. |
-| [`src/components/ConfettiCelebration.tsx`](file:///d:/wingigs/bahar/src/components/ConfettiCelebration.tsx) | HTML5 Canvas particle confetti burst on completion. | Very High: Delivers critical post-workout dopamine hit. |
-| [`src/app/outside/page.tsx`](file:///d:/wingigs/bahar/src/app/outside/page.tsx) | Confetti trigger + 1-tap "Share Accomplishment" card generator. | High: Drives viral buddy and social sharing. |
-| [`src/components/PWAInstallBanner.tsx`](file:///d:/wingigs/bahar/src/components/PWAInstallBanner.tsx) | Standalone install banner for iOS and Android. | Critical: Converts web tab visitors into home screen app users. |
-| [`src/domain/progress/achievements.ts`](file:///d:/wingigs/bahar/src/domain/progress/achievements.ts) | Badges & Milestones engine (First Sweat, 3-Day Dynamo, Century Club). | Very High: Creates long-term goal-directed motivation. |
-| [`src/app/progress/page.tsx`](file:///d:/wingigs/bahar/src/app/progress/page.tsx) | Visual Milestones grid + Recovery Shield status + 7-Day Consistency target. | High: Prevents single-day streak reset despair. |
-| [`src/app/spots/page.tsx`](file:///d:/wingigs/bahar/src/app/spots/page.tsx) | Favorite bookmarking (`⭐`), Saved filter chip, "Train Here" CTA. | High: Reduces time-to-session from court directory. |
-| [`src/app/ScreenTracker.tsx`](file:///d:/wingigs/bahar/src/app/ScreenTracker.tsx) | Exempts active outside workout mode from passive screen idling. | High: Eliminates user frustration and negative shaming. |
-| [`public/manifest.json`](file:///d:/wingigs/bahar/public/manifest.json) | Corrected theme and background colors to athletic dark `#090d16` and lime `#84cc16`. | High: Ensures native look and feel when launched from home screen. |
+| **Resilient Momentum** | [`src/domain/progress/momentum.ts`](../src/domain/progress/momentum.ts) | Implemented `calculateResilientMomentum` with Recovery Shield (1-day rest buffer) and weekly consistency targets. |
+| **Habit Anchoring** | [`src/components/HabitReminderSection.tsx`](../src/components/HabitReminderSection.tsx) | Daily training habit anchor, Web Notification push alert, 1-tap Google Calendar & Apple .ICS sync. |
+| **Accountability Duels** | [`src/app/buddy/page.tsx`](../src/app/buddy/page.tsx) | Added Weekly Consistency Duel (You vs Partner) + WhatsApp deep-link sharing. |
+| **Acoustic Synthesizer** | [`src/features/outside-mode/audio.ts`](../src/features/outside-mode/audio.ts) | Added native Web Audio oscillators for whistles, countdown pips, and victory chords. |
+| **Interval Transitions** | [`src/features/outside-mode/useOutsideEngine.ts`](../src/features/outside-mode/useOutsideEngine.ts) | Added 3-second countdown audio cues and start whistles. |
+| **Celebration Particle Canvas** | [`src/components/ConfettiCelebration.tsx`](../src/components/ConfettiCelebration.tsx) | HTML5 Canvas particle confetti burst on completion. |
+| **Workout Brag Generator** | [`src/app/outside/page.tsx`](../src/app/outside/page.tsx) | Confetti trigger + 1-tap "Share Accomplishment" card generator. |
+| **PWA Install Interceptor** | [`src/components/PWAInstallBanner.tsx`](../src/components/PWAInstallBanner.tsx) | Standalone install banner for iOS and Android. |
+| **Milestones Engine** | [`src/domain/progress/achievements.ts`](../src/domain/progress/achievements.ts) | Badges & Milestones engine (First Sweat, 3-Day Dynamo, Century Club). |
+| **Recovery Analytics** | [`src/app/progress/page.tsx`](../src/app/progress/page.tsx) | Visual Milestones grid + Recovery Shield status + 7-Day Consistency target. |
+| **Court Directory CTA** | [`src/app/spots/page.tsx`](../src/app/spots/page.tsx) | Favorite bookmarking (`⭐`), Saved filter chip, "Train Here" CTA. |
+| **Exempt Workout Idling** | [`src/app/ScreenTracker.tsx`](../src/app/ScreenTracker.tsx) | Exempts active outside workout mode from passive screen idling. |
+| **PWA Mobile Tokens** | [`public/manifest.json`](../public/manifest.json) | Corrected theme and background colors to athletic dark `#090d16` and lime `#84cc16`. |
 
 ---
 
-## 4. Growth & Retention Optimization Roadmap (For Future Scale)
+## 4. UI/UX MAX PRO Athletic Enhancements Implemented
 
-1. **Daily Morning Habit Trigger (Local Notifications)**:
-   - Implement scheduled Web Notifications prompting the athlete at their selected training hour:
-     *"🏸 Seattle weather is 62°F and calm. Your 25-minute court envelope is ready."*
-2. **Offline Audio Pack Caching**:
-   - Cache high-energy audio motivational soundbites inside CacheStorage for completely disconnected training on remote courts.
-3. **Weekly Buddy Duels**:
-   - Enable an opt-in "3-Session Weekly Challenge" where buddies track mutual completion meters in `/buddy`.
-4. **Vercel / Cloudflare Edge Deployment**:
-   - Connect the GitHub repository directly to Vercel or Cloudflare Pages for instant automatic preview deployments on every push.
-
----
-
-## 5. UI/UX MAX PRO Athletic Enhancements Implemented
-
-To elevate Bahar from a functional tool into an elite-tier athletic training companion, the following "MAX PRO" user experience upgrades were designed and integrated:
+To elevate Bahar from a functional tool into an elite-tier athletic training companion, the following user experience upgrades were designed and integrated:
 
 ### 1. 1-Tap Athletic Archetypes & Live Physical Forecast (`OnboardingForm.tsx`)
 * **3-Second Fast-Track Setup**: Added 3 athletic preset archetypes:
@@ -154,4 +140,3 @@ To elevate Bahar from a functional tool into an elite-tier athletic training com
 
 ### 5. Offline Vault Live Indicator (`Navigation.tsx`)
 * **"Offline Ready 🟢" Micro-Badge**: Prominent header indicator providing visual assurance of 100% local IndexedDB offline storage and zero cloud tracking.
-

@@ -36,17 +36,25 @@ export async function callModel<T = ZodDailyPlan>(options: CallModelOptions<T>):
       
       const latencyMs = Date.now() - startTime;
       
-      // Parse JSON (assumes the model returns just JSON or markdown code block)
+      // Robust JSON extraction from chatty open-weight model outputs
       let rawJson = response.content;
-      // Strip markdown code blocks if present
-      const match = rawJson.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
-      if (match) {
-        rawJson = match[1];
+      
+      // 1. Check for markdown code fences
+      const fenceMatch = rawJson.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      if (fenceMatch) {
+        rawJson = fenceMatch[1];
+      }
+
+      // 2. Extract outermost object or array bounds
+      const firstBrace = rawJson.indexOf('{');
+      const lastBrace = rawJson.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        rawJson = rawJson.substring(firstBrace, lastBrace + 1);
       }
 
       let parsed: unknown;
       try {
-        parsed = JSON.parse(rawJson);
+        parsed = JSON.parse(rawJson.trim());
       } catch (e) {
         throw new Error('parse_error');
       }
