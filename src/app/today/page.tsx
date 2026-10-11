@@ -570,6 +570,7 @@ export default function TodayPage() {
               </div>
               <button 
                 onClick={() => setActiveDrillModal(null)}
+                aria-label="Close"
                 className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center font-bold"
               >
                 ✕

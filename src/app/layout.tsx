@@ -1,18 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import localFont from "next/font/local";
 import "./globals.css";
 import { ServiceWorkerRegister } from "./ServiceWorkerRegister";
 import { ScreenTracker } from "./ScreenTracker";
 import { Navigation } from "./Navigation";
 import { PWAInstallBanner } from "../components/PWAInstallBanner";
 import { ThemeProvider } from "../context/ThemeContext";
-
-const jerseyM54 = localFont({
-  src: "./fonts/JerseyM54.ttf",
-  variable: "--font-jersey",
-  display: "swap",
-});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`dark ${jerseyM54.variable} ${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`dark ${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <script

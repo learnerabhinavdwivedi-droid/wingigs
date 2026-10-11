@@ -1,7 +1,17 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getProfile, saveProfile, exportDatabaseToJson, importDatabaseFromJson, resetDatabase } from '../data/local/queries';
+import { 
+  getProfile, 
+  saveProfile, 
+  exportDatabaseToJson, 
+  importDatabaseFromJson, 
+  resetDatabase,
+  saveBackupToDevice,
+  checkDevicePersistence,
+  requestDevicePersistence,
+  getDeviceStorageEstimate
+} from '../data/local/queries';
 import { UserProfile } from '../data/local/db';
 import { playAudioCue, unlockAudio } from '../features/outside-mode/audio';
 import { useRouter } from 'next/navigation';
@@ -29,6 +39,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [audioTesting, setAudioTesting] = useState(false);
+  const [isPersisted, setIsPersisted] = useState(true);
+  const [storageEstimate, setStorageEstimate] = useState<{ usageKB: number; quotaMB: number } | null>(null);
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -41,8 +54,18 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           setCity(p.city || 'Seattle');
         }
       });
+      checkDevicePersistence().then(persisted => {
+        setIsPersisted(persisted);
+        if (!persisted) {
+          requestDevicePersistence().then(granted => {
+            if (granted) setIsPersisted(true);
+          });
+        }
+      });
+      getDeviceStorageEstimate().then(est => setStorageEstimate(est));
       setSavedSuccess(false);
       setImportStatus(null);
+      setSaveSuccessMsg(null);
       setConfirmReset(false);
     }
   }, [isOpen]);
@@ -65,18 +88,13 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
   const handleExportData = async () => {
     setExporting(true);
+    setSaveSuccessMsg(null);
     try {
-      const json = await exportDatabaseToJson();
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      const dateStr = new Date().toISOString().slice(0, 10);
-      a.href = url;
-      a.download = `bahar-backup-${dateStr}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const res = await saveBackupToDevice();
+      if (res.success) {
+        setSaveSuccessMsg(`Saved to device: ${res.filename}`);
+        setTimeout(() => setSaveSuccessMsg(null), 4000);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -129,7 +147,10 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-lime-500/15 dark:bg-lime-400/10 border border-lime-500/30 dark:border-lime-400/20 text-lime-600 dark:text-lime-400 flex items-center justify-center text-sm font-bold">
-              ⚙️
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
             </div>
             <div>
               <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Settings & Data Vault</h2>
@@ -294,18 +315,38 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               disabled={audioTesting}
               className="w-full bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2"
             >
-              <span>{audioTesting ? '🔊 Playing Voice Cue...' : '🎙️ Test Speech Voice Cue'}</span>
+              {audioTesting ? (
+                <>
+                  <svg className="w-4 h-4 text-lime-500 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="16"/></svg>
+                  <span>Playing Voice Cue...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="22"/>
+                  </svg>
+                  <span>Test Speech Voice Cue</span>
+                </>
+              )}
             </button>
           </div>
 
-          {/* Data Export & Import */}
+          {/* Data Saved On Device & Backup */}
           <div className="bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 space-y-3">
             <div>
-              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-300 block mb-1">
-                Data Backup & Portability
-              </span>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-300">
+                  Data Backup & Portability
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-400/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {isPersisted ? 'Saved Permanently on Device' : 'Saved in Local Storage'}
+                </span>
+              </div>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Your workout logs, streaks, and custom baseline never leave your browser unless you export them.
+                Your workout logs, streaks, and custom baselines are saved locally on this device{storageEstimate ? ` (~${storageEstimate.usageKB} KB stored offline)` : ''}.
               </p>
             </div>
 
@@ -314,18 +355,27 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 type="button"
                 onClick={handleExportData}
                 disabled={exporting}
-                className="bg-lime-500/15 dark:bg-lime-500/10 hover:bg-lime-500/25 dark:hover:bg-lime-500/20 border border-lime-500/30 dark:border-lime-400/30 text-lime-700 dark:text-lime-400 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="bg-lime-400/15 hover:bg-lime-400/25 dark:bg-lime-500/15 dark:hover:bg-lime-500/25 border border-lime-500/30 dark:border-lime-400/30 text-lime-700 dark:text-lime-400 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
+                aria-label="Export JSON to device"
               >
-                <span>📥</span>
-                <span>{exporting ? 'Exporting...' : 'Export JSON'}</span>
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span>{exporting ? 'Saving...' : 'Export JSON'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
-                <span>📤</span>
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
                 <span>Import Backup</span>
               </button>
               <input
@@ -337,6 +387,15 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               />
             </div>
 
+            {saveSuccessMsg && (
+              <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-2.5 rounded-xl flex items-center gap-2 animate-in fade-in">
+                <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>{saveSuccessMsg}</span>
+              </div>
+            )}
+
             {importStatus && (
               <div className="text-[11px] font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 p-2.5 rounded-xl">
                 {importStatus}
@@ -346,9 +405,16 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
           {/* Danger Zone: Reset Database */}
           <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 rounded-2xl p-4">
-            <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400 block mb-1">
-              Danger Zone
-            </span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <svg className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                Danger Zone
+              </span>
+            </div>
             <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
               Erase all local profile settings, check-in history, and generated training plans.
             </p>

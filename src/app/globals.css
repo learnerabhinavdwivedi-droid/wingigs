@@ -2,14 +2,6 @@
 @variant dark (&:where(.dark, .dark *));
 @source "../**/*.{js,ts,jsx,tsx}";
 
-@font-face {
-  font-family: 'JerseyM54';
-  src: url('/fonts/JerseyM54.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --background: #f8fafc;
   --foreground: #090d16;
@@ -31,9 +23,10 @@ html.dark, :root.dark {
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-jersey), 'JerseyM54', var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-jersey: var(--font-jersey), 'JerseyM54', sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-jersey: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-formula1: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 html {
@@ -52,15 +45,23 @@ html.light {
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-jersey), 'JerseyM54', var(--font-geist-sans), sans-serif;
+  font-family: var(--font-sans);
+  letter-spacing: -0.011em;
   overflow-x: hidden;
   min-height: 100vh;
   transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6, .font-jersey {
-  font-family: var(--font-jersey), 'JerseyM54', sans-serif;
-  letter-spacing: 0.025em;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+.font-jersey, .font-formula1 {
+  font-family: var(--font-sans);
 }
 
 button, input, select, textarea {

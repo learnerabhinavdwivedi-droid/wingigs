@@ -1,7 +1,17 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getProfile, saveProfile, exportDatabaseToJson, importDatabaseFromJson, resetDatabase } from '../../data/local/queries';
+import { 
+  getProfile, 
+  saveProfile, 
+  exportDatabaseToJson, 
+  importDatabaseFromJson, 
+  resetDatabase,
+  saveBackupToDevice,
+  checkDevicePersistence,
+  requestDevicePersistence,
+  getDeviceStorageEstimate
+} from '../../data/local/queries';
 import { UserProfile } from '../../data/local/db';
 import { playAudioCue, unlockAudio } from '../../features/outside-mode/audio';
 import { useRouter } from 'next/navigation';
@@ -25,6 +35,9 @@ export default function SettingsPage() {
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [audioTesting, setAudioTesting] = useState(false);
+  const [isPersisted, setIsPersisted] = useState(true);
+  const [storageEstimate, setStorageEstimate] = useState<{ usageKB: number; quotaMB: number } | null>(null);
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
     getProfile().then(p => {
@@ -36,6 +49,15 @@ export default function SettingsPage() {
         setCity(p.city || 'Seattle');
       }
     });
+    checkDevicePersistence().then(persisted => {
+      setIsPersisted(persisted);
+      if (!persisted) {
+        requestDevicePersistence().then(granted => {
+          if (granted) setIsPersisted(true);
+        });
+      }
+    });
+    getDeviceStorageEstimate().then(est => setStorageEstimate(est));
   }, []);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -54,18 +76,13 @@ export default function SettingsPage() {
 
   const handleExportData = async () => {
     setExporting(true);
+    setSaveSuccessMsg(null);
     try {
-      const json = await exportDatabaseToJson();
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      const dateStr = new Date().toISOString().slice(0, 10);
-      a.href = url;
-      a.download = `bahar-backup-${dateStr}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const res = await saveBackupToDevice();
+      if (res.success) {
+        setSaveSuccessMsg(`Saved to device: ${res.filename}`);
+        setTimeout(() => setSaveSuccessMsg(null), 4000);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -279,18 +296,38 @@ export default function SettingsPage() {
               disabled={audioTesting}
               className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-2"
             >
-              <span>{audioTesting ? '🔊 Speaking Cue...' : '🎙️ Test Speech Synthesizer'}</span>
+              {audioTesting ? (
+                <>
+                  <svg className="w-4 h-4 text-lime-500 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="16"/></svg>
+                  <span>Speaking Cue...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="22"/>
+                  </svg>
+                  <span>Test Speech Synthesizer</span>
+                </>
+              )}
             </button>
           </div>
 
           {/* Backup & Portability */}
           <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-6 shadow-xl space-y-4 backdrop-blur-sm">
             <div>
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-300 mb-1">
-                Local-First Data Vault
-              </h3>
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <h3 className="text-sm font-black uppercase tracking-wider text-slate-300">
+                  Data Backup & Portability
+                </h3>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {isPersisted ? 'Saved Permanently on Device' : 'Saved in Local Storage'}
+                </span>
+              </div>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Download a clean JSON copy of all local logs, check-ins, and plans. No cloud lock-in.
+                Your workout logs, streaks, and training baselines are saved locally on this device{storageEstimate ? ` (~${storageEstimate.usageKB} KB stored offline)` : ''}.
               </p>
             </div>
 
@@ -299,18 +336,27 @@ export default function SettingsPage() {
                 type="button"
                 onClick={handleExportData}
                 disabled={exporting}
-                className="bg-lime-400/10 hover:bg-lime-400/20 border border-lime-400/30 text-lime-400 font-bold py-3 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="bg-lime-400/15 hover:bg-lime-400/25 border border-lime-400/30 text-lime-400 font-bold py-3 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
+                aria-label="Export JSON to device"
               >
-                <span>📥</span>
-                <span>{exporting ? 'Exporting...' : 'Export JSON'}</span>
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span>{exporting ? 'Saving...' : 'Export JSON'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold py-3 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
-                <span>📤</span>
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
                 <span>Import Backup</span>
               </button>
               <input
@@ -322,6 +368,15 @@ export default function SettingsPage() {
               />
             </div>
 
+            {saveSuccessMsg && (
+              <div className="text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 p-3 rounded-xl flex items-center gap-2 animate-in fade-in">
+                <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>{saveSuccessMsg}</span>
+              </div>
+            )}
+
             {importStatus && (
               <div className="text-xs font-semibold text-sky-400 bg-sky-950/60 border border-sky-800/60 p-3 rounded-xl">
                 {importStatus}
@@ -331,9 +386,16 @@ export default function SettingsPage() {
 
           {/* Danger Zone: Wipe Database */}
           <div className="bg-rose-950/20 border border-rose-900/40 rounded-3xl p-6 space-y-3">
-            <h3 className="text-sm font-black uppercase tracking-wider text-rose-400">
-              Clear Local Data
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <svg className="w-4 h-4 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <h3 className="text-sm font-black uppercase tracking-wider text-rose-400">
+                Clear Local Data
+              </h3>
+            </div>
             <p className="text-xs text-slate-400 leading-relaxed">
               Erase all locally cached IndexedDB tables (profile, check-in history, stored plans).
             </p>
