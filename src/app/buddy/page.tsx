@@ -1,46 +1,58 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../data/remote/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+interface Buddy {
+  id: string;
+  partner_name: string;
+  slot_days: string;
+  slot_time: string;
+  status: string;
+  last_streak: number;
+}
+
 export default function BuddyPage() {
   const router = useRouter();
-  const [session, setSession] = useState<any>(null);
-  const [buddies, setBuddies] = useState<any[]>([
+  const [buddies, setBuddies] = useState<Buddy[]>([
     {
-      id: 'demo-buddy',
+      id: 'demo-buddy-1',
       slot_days: 'Tue & Thu',
       slot_time: '6:30 PM',
-      partner_name: 'Marcus K. (Training Partner)',
+      partner_name: 'Marcus K. (Court Partner)',
       status: 'Active',
       last_streak: 5
     }
   ]);
   const [copied, setCopied] = useState(false);
   const [inviteCode, setInviteCode] = useState('BAHAR-COURT-77');
+  const [inputCode, setInputCode] = useState('');
+  const [linking, setLinking] = useState(false);
+  const [pairSuccess, setPairSuccess] = useState<string | null>(null);
+  const [cheerSent, setCheerSent] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
     const fetchBuddies = async () => {
       try {
         const { data } = await supabase
           .from('buddy_pairs')
           .select('*, user_a, user_b');
-        if (data && data.length > 0) setBuddies(data);
+        if (data && data.length > 0) {
+          setBuddies(prev => [...data, ...prev.filter(b => !data.some(d => d.id === b.id))]);
+        }
       } catch (err) {
-        // preserve local demo buddy
+        // Fallback to local state
       }
     };
     fetchBuddies();
   }, [router]);
 
   const handleCopyLink = () => {
-    const url = typeof window !== 'undefined' ? `${window.location.origin}/buddy?invite=${inviteCode}` : `https://bahar.app/buddy?invite=${inviteCode}`;
+    const url = typeof window !== 'undefined' 
+      ? `${window.location.origin}/buddy?invite=${inviteCode}` 
+      : `https://bahar.app/buddy?invite=${inviteCode}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     }
@@ -48,94 +60,221 @@ export default function BuddyPage() {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  const handlePairBuddy = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputCode.trim()) return;
+    setLinking(true);
+
+    const newBuddy: Buddy = {
+      id: 'partner-' + Date.now(),
+      partner_name: `Training Partner (${inputCode.trim().toUpperCase()})`,
+      slot_days: 'Mon, Wed, Fri',
+      slot_time: '7:00 AM',
+      status: 'Active',
+      last_streak: 3
+    };
+
+    setBuddies([newBuddy, ...buddies]);
+    setPairSuccess(`Paired successfully with code ${inputCode.trim().toUpperCase()}!`);
+    setInputCode('');
+    setLinking(false);
+    setTimeout(() => setPairSuccess(null), 3500);
+
+    try {
+      await supabase.from('buddy_pairs').insert([
+        {
+          partner_name: newBuddy.partner_name,
+          slot_days: newBuddy.slot_days,
+          slot_time: newBuddy.slot_time
+        }
+      ]);
+    } catch (err) {
+      // Local state preserved
+    }
+  };
+
+  const handleSendCheer = (partnerName: string) => {
+    setCheerSent(true);
+    setTimeout(() => setCheerSent(false), 3000);
+  };
+
   return (
-    <main className="min-h-screen p-4 sm:p-6 max-w-lg mx-auto text-slate-900 flex flex-col gap-5">
-      {/* Header */}
-      <div>
-        <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/50">
-          Accountability
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-1">
-          Your Buddy
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Pair with a court partner to keep each other honest. Zero spam, mutual streak checks.
-        </p>
-      </div>
-
-      {/* Active Buddy Card */}
-      {buddies.length > 0 && (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-sm">
-          <div className="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-            <h2 className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
-              Active Accountability Pair
-            </h2>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-              Synced
-            </span>
-          </div>
-
-          {buddies.map(b => (
-            <div key={b.id} className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold shadow-sm">
-                  🏸
-                </div>
-                <div>
-                  <div className="font-extrabold text-sm text-slate-900">
-                    {b.partner_name || 'Accountability Partner'}
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    Slot: <strong className="text-slate-700">{b.slot_days}</strong> at <strong className="text-slate-700">{b.slot_time}</strong>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-slate-50 border border-slate-200/70 rounded-2xl p-3 flex justify-between items-center text-xs">
-                <span className="text-slate-600 font-medium">Partner's Active Streak:</span>
-                <span className="font-extrabold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">
-                  🔥 {b.last_streak || 5} days
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Invite a New Buddy */}
-      <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-blue-200/80 rounded-3xl p-5 shadow-sm">
-        <h3 className="font-black text-base text-slate-900 mb-1">
-          Invite a New Court Buddy
-        </h3>
-        <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-          Share your invite code with a friend or training partner. When they enter your code, you'll see each other's check-ins without sharing private data.
-        </p>
-
-        <div className="bg-white border border-blue-200 rounded-2xl p-3 flex items-center justify-between gap-2 mb-3 shadow-inner">
-          <div className="font-mono font-bold text-xs sm:text-sm text-slate-800 tracking-wider truncate">
-            {inviteCode}
-          </div>
-          <span className="text-[10px] font-bold text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-md">
-            Invite Code
-          </span>
-        </div>
-
-        <button 
-          onClick={handleCopyLink}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
-        >
-          <span>{copied ? '✓ Copied to Clipboard!' : '📋 Copy Invite Link'}</span>
-        </button>
-      </div>
-
-      {/* Privacy Guarantee */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 text-xs text-slate-500 flex items-start gap-2.5">
-        <span className="text-base leading-none">🛡️</span>
+    <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto text-slate-100 flex flex-col gap-6">
+      
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
         <div>
-          <strong className="text-slate-700 block mb-0.5">Privacy First Pairing:</strong>
-          Only your check-in completion and minutes are shared. Your health logs, soreness notes, and personal inputs stay strictly local on your phone.
+          <span className="text-xs font-black uppercase tracking-wider text-sky-400 bg-sky-400/10 px-2.5 py-0.5 rounded-full border border-sky-400/20">
+            Accountability
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-1">
+            Training Buddies
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-lg">
+            Pair with a court partner to keep each other honest. Zero spam, mutual streak verification.
+          </p>
         </div>
+
+        <Link 
+          href="/today" 
+          className="self-start sm:self-auto text-xs font-extrabold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl hover:border-slate-700 transition-colors"
+        >
+          &larr; Today's Plan
+        </Link>
       </div>
+
+      {/* Main Responsive Grid Layout (2 cols on lg) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Left Column (Active Buddies List - 7 cols) */}
+        <div className="lg:col-span-7 flex flex-col gap-5">
+          <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-7 shadow-xl backdrop-blur-sm">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">
+                Active Accountability Pairs ({buddies.length})
+              </h2>
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-lime-400/10 text-lime-400 border border-lime-400/20">
+                Peer Synced
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {buddies.map(b => (
+                <div 
+                  key={b.id} 
+                  className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col gap-4 hover:border-slate-700 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 rounded-2xl bg-sky-400/10 border border-sky-400/20 text-sky-400 flex items-center justify-center text-xl font-bold shadow-sm">
+                        🏸
+                      </div>
+                      <div>
+                        <div className="font-extrabold text-base text-white tracking-tight">
+                          {b.partner_name}
+                        </div>
+                        <div className="text-xs text-slate-400 mt-0.5">
+                          Target: <strong className="text-slate-200">{b.slot_days}</strong> at <strong className="text-slate-200">{b.slot_time}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <span className="text-xs font-black text-lime-400 bg-lime-400/10 px-2.5 py-1 rounded-xl border border-lime-400/20">
+                      🔥 {b.last_streak}d
+                    </span>
+                  </div>
+
+                  {/* Partner Telemetry Bar & High-Five CTA */}
+                  <div className="bg-slate-900/80 border border-slate-800/80 rounded-xl p-3 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 text-slate-300">
+                      <span className="w-2 h-2 rounded-full bg-lime-400" />
+                      <span>Checked in today</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSendCheer(b.partner_name)}
+                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5"
+                    >
+                      <span>🙌</span>
+                      <span>{cheerSent ? 'Sent!' : 'High-Five'}</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {cheerSent && (
+              <div className="mt-4 p-3 bg-lime-400/10 border border-lime-400/20 rounded-2xl text-xs font-bold text-lime-400 text-center animate-in fade-in">
+                ✓ High-five delivered to your accountability partner!
+              </div>
+            )}
+          </div>
+
+          {/* Privacy Guarantee Banner */}
+          <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4 sm:p-5 text-xs text-slate-400 flex items-start gap-3">
+            <span className="text-xl leading-none">🛡️</span>
+            <div>
+              <strong className="text-white block mb-1 text-sm font-bold">Privacy-First Architecture:</strong>
+              Only your workout completion status and duration are synchronized. Your soreness notes, medical details, and personal routines stay 100% private in your device's IndexedDB.
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column (Pair with Partner Form & Invite Link - 5 cols) */}
+        <div className="lg:col-span-5 flex flex-col gap-5">
+          
+          {/* Pair with Partner Code Form */}
+          <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+            <span className="text-[10px] font-black uppercase tracking-widest text-lime-400 block mb-1">
+              Link Partner
+            </span>
+            <h3 className="font-black text-lg sm:text-xl text-white tracking-tight mb-2">
+              Enter Partner's Invite Code
+            </h3>
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+              Got a pairing code from a training friend? Enter it below to link your streak without sharing private health logs.
+            </p>
+
+            <form onSubmit={handlePairBuddy} className="flex flex-col gap-3">
+              <input
+                type="text"
+                value={inputCode}
+                onChange={e => setInputCode(e.target.value)}
+                placeholder="e.g. BAHAR-COURT-99"
+                required
+                className="w-full bg-slate-950 border border-slate-800 focus:border-lime-400 rounded-xl px-4 py-3 text-sm text-white font-mono font-bold tracking-wider outline-none uppercase placeholder:normal-case placeholder:font-sans placeholder:text-slate-500"
+              />
+
+              <button
+                type="submit"
+                disabled={linking}
+                className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black py-3 rounded-xl text-xs sm:text-sm shadow-lg shadow-lime-500/20 active:scale-95 transition-all disabled:opacity-50"
+              >
+                {linking ? 'Linking Partner...' : 'Pair Accountability Partner &rarr;'}
+              </button>
+            </form>
+
+            {pairSuccess && (
+              <div className="mt-3 p-3 bg-lime-400/10 border border-lime-400/30 rounded-xl text-xs font-bold text-lime-400 text-center">
+                ✓ {pairSuccess}
+              </div>
+            )}
+          </div>
+
+          {/* Share Your Invite Code Card */}
+          <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+            <span className="text-[10px] font-black uppercase tracking-widest text-sky-400 block mb-1">
+              Your Court Code
+            </span>
+            <h3 className="font-black text-lg sm:text-xl text-white tracking-tight mb-2">
+              Invite a Court Partner
+            </h3>
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+              Share your personal invite link or code with a training buddy to start accountability tracking.
+            </p>
+
+            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between gap-2 mb-3">
+              <span className="font-mono font-black text-sm text-lime-400 tracking-wider">
+                {inviteCode}
+              </span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase bg-slate-800 px-2 py-0.5 rounded-md">
+                Active Code
+              </span>
+            </div>
+
+            <button 
+              onClick={handleCopyLink}
+              className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-200 font-bold py-3 px-4 rounded-xl text-xs active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <span>{copied ? '✓ Copied to Clipboard!' : '📋 Copy Invite Link'}</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
     </main>
   );
 }

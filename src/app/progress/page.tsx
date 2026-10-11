@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAllCheckins } from '../../data/local/queries';
 import { calculateMomentum } from '../../domain/progress/momentum';
 import { getDayKey } from '../../domain/time/day_key';
@@ -31,169 +31,276 @@ export default function ProgressPage() {
   // Format screen time
   const screenMins = Math.floor(totalScreenSeconds / 60);
   const isWinning = totalOutdoorMinutes >= screenMins;
+  const ratioPercent = (totalOutdoorMinutes + screenMins) > 0 
+    ? Math.round((totalOutdoorMinutes / (totalOutdoorMinutes + screenMins)) * 100) 
+    : 100;
 
   return (
-    <main className="min-h-screen p-4 sm:p-6 max-w-lg mx-auto text-slate-900 flex flex-col gap-6">
+    <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto text-slate-100 flex flex-col gap-6">
+      
       {/* Top Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/50">
-            Analytics & History
+          <span className="text-xs font-black uppercase tracking-wider text-lime-400 bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-400/20">
+            Telemetry & History
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-1">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-1">
             Your Progress
           </h1>
         </div>
-        <Link 
-          href="/today" 
-          className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm transition-colors"
-        >
-          &larr; Today
-        </Link>
+
+        <div className="flex items-center gap-2">
+          <Link 
+            href="/today" 
+            className="text-xs font-extrabold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl hover:border-slate-700 transition-colors"
+          >
+            &larr; Today's Plan
+          </Link>
+          <Link
+            href="/outside"
+            className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition-all shadow-md shadow-lime-400/20"
+          >
+            Train Now
+          </Link>
+        </div>
       </div>
 
-      {/* Momentum Streak Hero Card */}
-      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 text-white p-6 rounded-3xl shadow-xl shadow-blue-600/20 text-center relative overflow-hidden">
-        <div className="absolute -top-12 -right-12 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-xl">🔥</span>
-          <h2 className="text-xs font-extrabold uppercase tracking-widest text-blue-100">
-            Momentum Streak
-          </h2>
-        </div>
-        <div className="text-6xl sm:text-7xl font-black tracking-tight my-1">
-          {momentum}
-        </div>
-        <p className="text-xs text-blue-100/90 font-medium max-w-xs mx-auto">
-          {momentum === 0 
-            ? 'Start your streak today. Rest days with smart envelopes count toward momentum!' 
-            : `${momentum} active days locked in. Consistency built on failure-tolerant planning.`}
-        </p>
-      </div>
-
-      {/* Screen vs Outdoor Contrast Card */}
-      <div className="bg-slate-900 text-white p-5 rounded-3xl shadow-md border border-slate-800">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <h2 className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
-              Screen vs Outdoor
-            </h2>
-          </div>
-          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-            isWinning ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
-          }`}>
-            {isWinning ? 'Outdoor Victory 🌿' : 'Screen Dominating ⚠️'}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 bg-slate-800/60 p-4 rounded-2xl border border-slate-700/60 text-center mb-3">
+      {/* Hero Dual Dashboard Cards (2 columns on md/lg) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        
+        {/* Momentum Streak Hero Card */}
+        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-lime-950/40 border border-slate-800/90 text-white p-6 sm:p-8 rounded-3xl shadow-xl relative overflow-hidden flex flex-col justify-between">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-lime-500/10 rounded-full blur-3xl pointer-events-none" />
+          
           <div>
-            <div className="text-3xl font-black text-rose-400">{screenMins}</div>
-            <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
-              Screen Mins
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xl">🔥</span>
+              <h2 className="text-xs font-black uppercase tracking-widest text-lime-400">
+                Momentum Streak
+              </h2>
+            </div>
+            
+            <div className="text-6xl sm:text-7xl font-black tracking-tight my-2 text-white flex items-baseline gap-2">
+              <span>{momentum}</span>
+              <span className="text-base text-slate-400 font-bold uppercase tracking-wider">Days</span>
             </div>
           </div>
+
+          <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed mt-2">
+            {momentum === 0 
+              ? 'Start your momentum today. Rest days within smart envelopes keep your streak alive!' 
+              : `${momentum} active days locked in. Consistency built on failure-tolerant planning.`}
+          </p>
+        </div>
+
+        {/* Screen vs Outdoor Contrast Card */}
+        <div className="bg-slate-900/80 border border-slate-800/90 text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col justify-between">
           <div>
-            <div className="text-3xl font-black text-emerald-400">{totalOutdoorMinutes}</div>
-            <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
-              Outdoor Mins
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-lime-400 animate-pulse" />
+                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">
+                  Screen vs Court Volume
+                </h2>
+              </div>
+
+              <span className={`text-[11px] font-black px-2.5 py-1 rounded-full border ${
+                isWinning 
+                  ? 'bg-lime-400/15 text-lime-300 border-lime-400/30' 
+                  : 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+              }`}>
+                {isWinning ? 'Court Dominating 🌿' : 'Screen Dominating ⚠️'}
+              </span>
             </div>
-          </div>
-        </div>
 
-        <p className="text-xs text-center text-slate-300 font-medium">
-          {isWinning 
-            ? 'You are beating the screen! Your physical court volume surpasses passive screen time.' 
-            : 'The screen is winning. Get outside and add court minutes to flip the ratio!'}
-        </p>
-      </div>
-
-      {/* Quick Overview Stats */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-white border border-slate-200/90 p-4 rounded-2xl shadow-sm text-center">
-          <div className="text-2xl font-black text-slate-800">{completedWorkouts.length}</div>
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
-            Total Sessions
-          </div>
-        </div>
-        <div className="bg-white border border-slate-200/90 p-4 rounded-2xl shadow-sm text-center">
-          <div className="text-2xl font-black text-blue-600">{totalOutdoorMinutes}m</div>
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
-            Court Practice
-          </div>
-        </div>
-      </div>
-
-      {/* History Timeline */}
-      <div className="bg-white border border-slate-200/90 p-5 rounded-3xl shadow-sm">
-        <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-          <h3 className="font-extrabold text-base text-slate-900 tracking-tight">
-            Workout History
-          </h3>
-          <span className="text-xs font-bold text-slate-400">
-            {completedWorkouts.length} logged
-          </span>
-        </div>
-
-        <div className="space-y-2.5">
-          {completedWorkouts.map(c => (
-            <div 
-              key={c.dayKey} 
-              className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 flex justify-between items-center transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shadow-sm">
-                  ✓
+            <div className="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80 text-center mb-4">
+              <div>
+                <div className="text-3xl sm:text-4xl font-black text-rose-400">{screenMins}m</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">
+                  Passive Screen
                 </div>
-                <div>
-                  <div className="font-bold text-sm text-slate-800">{c.dayKey}</div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2 py-0.5 rounded-md border border-emerald-200/60">
-                      Completed
-                    </span>
-                    <span className="text-[11px] text-slate-400 font-medium">Badminton Drill Session</span>
+              </div>
+              <div>
+                <div className="text-3xl sm:text-4xl font-black text-lime-400">{totalOutdoorMinutes}m</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">
+                  Active Court
+                </div>
+              </div>
+            </div>
+
+            {/* Ratio Progress Bar */}
+            <div className="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-slate-800 mb-2">
+              <div 
+                className={`h-full transition-all duration-500 ${isWinning ? 'bg-lime-400' : 'bg-rose-500'}`}
+                style={{ width: `${Math.min(100, Math.max(5, ratioPercent))}%` }}
+              />
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-400 font-medium">
+            {isWinning 
+              ? 'You are beating passive screen time! Physical court presence exceeds phone idling.' 
+              : 'Screen time is ahead. Log a quick 15-minute drill session to reclaim momentum.'}
+          </p>
+        </div>
+
+      </div>
+
+      {/* Overview Stat Badges (4 columns responsive) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-slate-900/60 border border-slate-800/80 p-4 sm:p-5 rounded-2xl shadow-sm">
+          <div className="text-2xl sm:text-3xl font-black text-white">{completedWorkouts.length}</div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-1">
+            Completed Sessions
+          </div>
+        </div>
+
+        <div className="bg-slate-900/60 border border-slate-800/80 p-4 sm:p-5 rounded-2xl shadow-sm">
+          <div className="text-2xl sm:text-3xl font-black text-lime-400">{totalOutdoorMinutes}m</div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-1">
+            Total Court Minutes
+          </div>
+        </div>
+
+        <div className="bg-slate-900/60 border border-slate-800/80 p-4 sm:p-5 rounded-2xl shadow-sm">
+          <div className="text-2xl sm:text-3xl font-black text-sky-400">
+            {completedWorkouts.length > 0 ? Math.round(totalOutdoorMinutes / completedWorkouts.length) : 0}m
+          </div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-1">
+            Avg Session Length
+          </div>
+        </div>
+
+        <div className="bg-slate-900/60 border border-slate-800/80 p-4 sm:p-5 rounded-2xl shadow-sm">
+          <div className="text-2xl sm:text-3xl font-black text-amber-400">
+            {ratioPercent}%
+          </div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-1">
+            Court vs Screen Ratio
+          </div>
+        </div>
+      </div>
+
+      {/* Responsive 2-Column Split: History (Left) & Insights/Debrief (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* Workout History (7 cols on lg) */}
+        <div className="lg:col-span-7 bg-slate-900/70 border border-slate-800/80 p-5 sm:p-7 rounded-3xl shadow-xl backdrop-blur-sm">
+          <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-800">
+            <h3 className="font-black text-lg text-white tracking-tight">
+              Workout History
+            </h3>
+            <span className="text-xs font-bold text-slate-400 bg-slate-800 px-2.5 py-0.5 rounded-full">
+              {completedWorkouts.length} logged
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {completedWorkouts.map(c => (
+              <div 
+                key={c.dayKey} 
+                className="p-4 rounded-2xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800/50 flex justify-between items-center transition-colors"
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-lime-400/10 border border-lime-400/20 text-lime-400 flex items-center justify-center text-sm font-black shadow-sm">
+                    ✓
+                  </div>
+                  <div>
+                    <div className="font-extrabold text-sm sm:text-base text-white tracking-tight">
+                      {c.dayKey}
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] bg-lime-400/10 text-lime-400 font-black px-2 py-0.5 rounded-md border border-lime-400/20">
+                        Completed
+                      </span>
+                      <span className="text-xs text-slate-400 font-medium">
+                        Court Drill Session
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="text-sm font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200/50">
-                {c.minutes} min
-              </div>
-            </div>
-          ))}
 
-          {completedWorkouts.length === 0 && (
-            <div className="text-center py-8 text-slate-400">
-              <div className="text-3xl mb-2">🏸</div>
-              <div className="text-sm font-semibold">No completed workouts yet.</div>
-              <p className="text-xs text-slate-400 mt-1">
-                Complete your first drill session to start logging history.
-              </p>
-            </div>
-          )}
+                <div className="text-sm sm:text-base font-black text-lime-400 bg-lime-400/10 px-3.5 py-1.5 rounded-xl border border-lime-400/20">
+                  {c.minutes} min
+                </div>
+              </div>
+            ))}
+
+            {completedWorkouts.length === 0 && (
+              <div className="text-center py-12 text-slate-400 bg-slate-950/40 border border-slate-800 rounded-2xl p-6">
+                <div className="text-4xl mb-3">🏸</div>
+                <div className="text-sm font-bold text-white">No completed workouts yet.</div>
+                <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                  Hit "Train Now" to run today's court session and record your first log.
+                </p>
+                <Link
+                  href="/today"
+                  className="inline-block mt-4 bg-lime-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs hover:bg-lime-300 transition-colors"
+                >
+                  Start Today's Workout &rarr;
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Weekly Debrief & Retest Cards (5 cols on lg) */}
+        <div className="lg:col-span-5 flex flex-col gap-5">
+          
+          {/* Sunday Review Shortcut Card */}
+          <Link 
+            href="/week" 
+            className="bg-slate-900/70 hover:bg-slate-800/70 border border-purple-500/30 hover:border-purple-500/50 p-6 rounded-3xl shadow-xl transition-all group backdrop-blur-sm"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-black uppercase tracking-widest text-purple-400 bg-purple-950/60 px-2.5 py-0.5 rounded-full border border-purple-800/60">
+                Weekly Assessment
+              </span>
+              <span className="text-xl group-hover:scale-110 transition-transform">📋</span>
+            </div>
+            
+            <h4 className="font-black text-lg text-white tracking-tight mb-1">
+              Sunday Review & Debrief
+            </h4>
+            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+              AI coach analyzes your 7-day training consistency against passive phone screen usage to set next week's focus.
+            </p>
+            
+            <div className="text-xs font-bold text-purple-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <span>View Weekly Evaluation</span>
+              <span>&rarr;</span>
+            </div>
+          </Link>
+
+          {/* 30-Day Retest Benchmark Card */}
+          <Link 
+            href="/retest" 
+            className="bg-slate-900/70 hover:bg-slate-800/70 border border-sky-500/30 hover:border-sky-500/50 p-6 rounded-3xl shadow-xl transition-all group backdrop-blur-sm"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-black uppercase tracking-widest text-sky-400 bg-sky-950/60 px-2.5 py-0.5 rounded-full border border-sky-800/60">
+                30-Day Milestone
+              </span>
+              <span className="text-xl group-hover:scale-110 transition-transform">🎯</span>
+            </div>
+            
+            <h4 className="font-black text-lg text-white tracking-tight mb-1">
+              Physical Fitness Retest
+            </h4>
+            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+              Re-evaluate your benchmark drill to recalibrate your baseline and expand your daily envelope.
+            </p>
+            
+            <div className="text-xs font-bold text-sky-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <span>Test Benchmark Drill</span>
+              <span>&rarr;</span>
+            </div>
+          </Link>
+
+        </div>
+
       </div>
-      
-      {/* Review & Retest Shortcuts */}
-      <div className="grid grid-cols-2 gap-3 pb-6">
-        <Link 
-          href="/week" 
-          className="bg-purple-50 hover:bg-purple-100 border border-purple-200/80 text-purple-900 p-4 rounded-2xl text-center transition-all group"
-        >
-          <div className="text-lg mb-1 group-hover:scale-110 transition-transform">📋</div>
-          <div className="font-bold text-xs uppercase tracking-wider text-purple-700">Sunday Review</div>
-          <div className="text-[11px] text-purple-600/80 mt-0.5">AI Weekly Assessment</div>
-        </Link>
-        
-        <Link 
-          href="/retest" 
-          className="bg-blue-50 hover:bg-blue-100 border border-blue-200/80 text-blue-900 p-4 rounded-2xl text-center transition-all group"
-        >
-          <div className="text-lg mb-1 group-hover:scale-110 transition-transform">🎯</div>
-          <div className="font-bold text-xs uppercase tracking-wider text-blue-700">30-Day Retest</div>
-          <div className="text-[11px] text-blue-600/80 mt-0.5">Gauge Baseline Shift</div>
-        </Link>
-      </div>
+
     </main>
   );
 }

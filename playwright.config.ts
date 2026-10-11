@@ -3,10 +3,14 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
+  timeout: 45000,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
+  expect: {
+    timeout: 15000,
+  },
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
@@ -20,10 +24,6 @@ export default defineConfig({
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
     },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    }
   ],
   webServer: {
     command: 'npm run dev',

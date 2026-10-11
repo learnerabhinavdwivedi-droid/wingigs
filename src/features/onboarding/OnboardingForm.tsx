@@ -188,15 +188,20 @@ export function OnboardingForm() {
 
   const handleStartTraining = async () => {
     setLoading(true);
-    await saveProfile({
-      level: profile.level,
-      maxMinutesPerSession: profile.maxMinutesPerSession,
-      maxSessionsPerWeek: profile.maxSessionsPerWeek,
-      sport: profile.sport,
-      city: profile.city || 'Seattle',
-      baselineResult: baselineResult || 'Initial baseline completed'
-    });
-    router.push('/today');
+    try {
+      await saveProfile({
+        level: profile.level,
+        maxMinutesPerSession: profile.maxMinutesPerSession,
+        maxSessionsPerWeek: profile.maxSessionsPerWeek,
+        sport: profile.sport,
+        city: profile.city || 'Seattle',
+        baselineResult: baselineResult || 'Initial baseline completed'
+      });
+      router.push('/today');
+    } catch (err) {
+      console.error('Failed to save profile:', err);
+      router.push('/today');
+    }
   };
 
   const handleProfileSubmit = async (e: React.FormEvent) => {

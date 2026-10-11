@@ -21,13 +21,13 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Bahar",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#2563eb",
+  themeColor: "#090d16",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -39,17 +39,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`dark ${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
-      <body className="antialiased min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-20">
+      <body className="antialiased min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-lime-400 selection:text-slate-950 pb-20 md:pb-8">
         <ServiceWorkerRegister />
         <ScreenTracker />
         <Navigation />
-        {children}
+        <div className="flex-1 w-full">
+          {children}
+        </div>
       </body>
     </html>
   );
 }
-
