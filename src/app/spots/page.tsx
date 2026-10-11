@@ -62,6 +62,26 @@ export default function SpotsPage() {
   const [filterSport, setFilterSport] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('bahar_favorite_spots');
+      if (stored) {
+        setFavoriteIds(JSON.parse(stored));
+      }
+    } catch (e) {}
+  }, []);
+
+  const toggleFavorite = (id: string) => {
+    const next = favoriteIds.includes(id) 
+      ? favoriteIds.filter(f => f !== id) 
+      : [...favoriteIds, id];
+    setFavoriteIds(next);
+    try {
+      localStorage.setItem('bahar_favorite_spots', JSON.stringify(next));
+    } catch (e) {}
+  };
   
   // New spot form state
   const [newSpot, setNewSpot] = useState({
@@ -140,12 +160,16 @@ export default function SpotsPage() {
   };
 
   const filteredSpots = spots.filter(s => {
-    const matchesFilter = filterSport === 'all' || s.sport_tags?.includes(filterSport);
+    if (filterSport === 'favorites' && !favoriteIds.includes(s.id)) {
+      return false;
+    }
+    const matchesFilter = filterSport === 'all' || filterSport === 'favorites' || s.sport_tags?.includes(filterSport);
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch = !q || 
       s.name.toLowerCase().includes(q) || 
       s.city.toLowerCase().includes(q) || 
-      s.public_area.toLowerCase().includes(q);
+      s.public_area.toLowerCase().includes(q) ||
+      (s.tip && s.tip.toLowerCase().includes(q));
     return matchesFilter && matchesSearch;
   });
 
@@ -213,6 +237,7 @@ export default function SpotsPage() {
         <div className="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
           {[
             { id: 'all', label: 'All Spots' },
+            { id: 'favorites', label: `⭐ Saved (${favoriteIds.length})` },
             { id: 'badminton', label: '🏸 Badminton' },
             { id: 'wall-rallies', label: '🧱 Wall Rally' },
             { id: 'outdoor', label: '🌤️ Outdoor' }
@@ -274,6 +299,18 @@ export default function SpotsPage() {
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
+                  onClick={() => toggleFavorite(spot.id)}
+                  className={`p-1.5 rounded-lg border transition-colors ${
+                    favoriteIds.includes(spot.id)
+                      ? 'bg-amber-400/20 text-amber-300 border-amber-400/40'
+                      : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                  }`}
+                  title={favoriteIds.includes(spot.id) ? 'Remove bookmark' : 'Bookmark Court'}
+                >
+                  {favoriteIds.includes(spot.id) ? '⭐' : '☆'}
+                </button>
+                <button
+                  type="button"
                   onClick={() => handleShareSpot(spot)}
                   className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
                   title="Copy spot details"
@@ -284,11 +321,18 @@ export default function SpotsPage() {
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${spot.name} ${spot.city}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-slate-800 hover:bg-slate-700 text-lime-400 font-bold px-2.5 py-1 rounded-lg text-xs transition-colors flex items-center gap-1"
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold px-2 py-1 rounded-lg text-xs transition-colors flex items-center gap-1"
                 >
                   <span>Map</span>
                   <span>↗</span>
                 </a>
+                <Link
+                  href="/today"
+                  className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-2.5 py-1 rounded-lg text-xs transition-all shadow-sm flex items-center gap-1"
+                >
+                  <span>Train</span>
+                  <span>&rarr;</span>
+                </Link>
               </div>
             </div>
           </div>

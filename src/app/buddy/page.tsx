@@ -266,12 +266,26 @@ export default function BuddyPage() {
               </span>
             </div>
 
-            <button 
-              onClick={handleCopyLink}
-              className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-200 font-bold py-3 px-4 rounded-xl text-xs active:scale-95 transition-all flex items-center justify-center gap-2"
-            >
-              <span>{copied ? '✓ Copied to Clipboard!' : '📋 Copy Invite Link'}</span>
-            </button>
+            <div className="flex flex-col gap-2">
+              <button 
+                onClick={handleCopyLink}
+                className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-200 font-bold py-3 px-4 rounded-xl text-xs active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <span>{copied ? '✓ Copied to Clipboard!' : '📋 Copy Invite Link'}</span>
+              </button>
+
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                  `Hey! Join me on Bahar for resilient athletic training. Pair up with my code: ${inviteCode} at https://bahar.app/buddy?invite=${inviteCode}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2"
+              >
+                <span>💬</span>
+                <span>Share via WhatsApp</span>
+              </a>
+            </div>
           </div>
 
         </div>

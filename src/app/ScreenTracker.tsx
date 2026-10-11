@@ -1,14 +1,22 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { getDayKey } from '../domain/time/day_key';
 import { db } from '../data/local/db';
 
 export function ScreenTracker() {
   const lastActiveRef = useRef<number>(Date.now());
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleVisibility = () => {
+      // Never count time spent training in Outside mode as passive screen time
+      if (pathname === '/outside') {
+        lastActiveRef.current = Date.now();
+        return;
+      }
+
       if (document.visibilityState === 'hidden') {
         const now = Date.now();
         const diff = Math.floor((now - lastActiveRef.current) / 1000);
@@ -46,7 +54,7 @@ export function ScreenTracker() {
       document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('beforeunload', handleUnload);
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

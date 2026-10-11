@@ -4,6 +4,7 @@ import "./globals.css";
 import { ServiceWorkerRegister } from "./ServiceWorkerRegister";
 import { ScreenTracker } from "./ScreenTracker";
 import { Navigation } from "./Navigation";
+import { PWAInstallBanner } from "../components/PWAInstallBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +51,7 @@ export default function RootLayout({
         <div className="flex-1 w-full">
           {children}
         </div>
+        <PWAInstallBanner />
       </body>
     </html>
   );

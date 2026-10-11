@@ -45,7 +45,7 @@ test.describe('Bahar Core Loop', () => {
 
     // 6. Progress Page
     await page.waitForURL('/progress');
-    await expect(page.getByText('Your Progress')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your Progress' })).toBeVisible();
     await expect(page.getByText('Completed').first()).toBeVisible();
   });
 });

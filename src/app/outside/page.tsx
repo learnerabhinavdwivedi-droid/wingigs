@@ -8,6 +8,7 @@ import { getDayKey } from '../../domain/time/day_key';
 import { saveCheckin } from '../../data/local/queries';
 import Link from 'next/link';
 import drillsData from '../../data/drills/badminton.json';
+import { ConfettiCelebration } from '../../components/ConfettiCelebration';
 
 export default function OutsidePage() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function OutsidePage() {
 
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const [showDrillList, setShowDrillList] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
   const wakeLockRef = useRef<any>(null);
 
   useEffect(() => {
@@ -78,23 +80,35 @@ export default function OutsidePage() {
 
   if (state === 'done') {
     const totalMinutes = plan.blocks.reduce((acc, b) => acc + b.minutes, 0);
+
+    const handleShareWorkout = () => {
+      const text = `🏸 Crushed today's session on Bahar! ${totalMinutes} active court minutes logged across ${plan.blocks.length} drills. Building unstoppable momentum! 🔥`;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text);
+      }
+      setCopiedShare(true);
+      setTimeout(() => setCopiedShare(false), 2500);
+    };
+
     return (
-      <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-emerald-950 flex flex-col items-center justify-center text-white p-6 sm:p-10 text-center">
-        <div className="w-24 h-24 bg-lime-400/15 text-lime-400 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-2xl shadow-lime-500/30 border border-lime-400/30 animate-bounce">
+      <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-emerald-950 flex flex-col items-center justify-center text-white p-6 sm:p-10 text-center relative overflow-hidden">
+        <ConfettiCelebration />
+
+        <div className="w-24 h-24 bg-lime-400/15 text-lime-400 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-2xl shadow-lime-500/30 border border-lime-400/30 animate-bounce relative z-10">
           🏆
         </div>
         
-        <span className="text-xs font-black uppercase tracking-widest text-lime-400 mb-2">
+        <span className="text-xs font-black uppercase tracking-widest text-lime-400 mb-2 relative z-10">
           Session Complete
         </span>
-        <h1 className="text-4xl sm:text-6xl font-black mb-3 tracking-tight text-white">
+        <h1 className="text-4xl sm:text-6xl font-black mb-3 tracking-tight text-white relative z-10">
           Done!
         </h1>
-        <p className="text-sm sm:text-base text-slate-300 mb-8 max-w-md leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-300 mb-8 max-w-md leading-relaxed relative z-10">
           Completed <strong className="text-lime-400 font-black">{totalMinutes} active minutes</strong> across {plan.blocks.length} structured court drills.
         </p>
 
-        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 w-full max-w-md mb-8 grid grid-cols-3 divide-x divide-slate-800 text-center shadow-xl">
+        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 w-full max-w-md mb-6 grid grid-cols-3 divide-x divide-slate-800 text-center shadow-xl relative z-10">
           <div className="px-2">
             <div className="text-2xl sm:text-3xl font-black text-white">{plan.blocks.length}</div>
             <div className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Drills</div>
@@ -109,12 +123,22 @@ export default function OutsidePage() {
           </div>
         </div>
 
-        <button 
-          onClick={finishWorkout} 
-          className="w-full max-w-md bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black px-8 py-4 rounded-2xl text-lg sm:text-xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
-        >
-          Save & Return &rarr;
-        </button>
+        <div className="w-full max-w-md flex flex-col gap-3 relative z-10">
+          <button 
+            onClick={finishWorkout} 
+            className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black px-8 py-4 rounded-2xl text-lg sm:text-xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
+          >
+            Save & Return &rarr;
+          </button>
+
+          <button
+            type="button"
+            onClick={handleShareWorkout}
+            className="w-full bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 font-bold py-3 px-6 rounded-2xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2"
+          >
+            <span>{copiedShare ? '✅ Copied to Clipboard!' : '📤 Share Workout Accomplishment'}</span>
+          </button>
+        </div>
       </main>
     );
   }

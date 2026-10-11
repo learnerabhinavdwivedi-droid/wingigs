@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { playAudioCue, unlockAudio, stopSilentAudio } from './audio';
+import { 
+  playAudioCue, unlockAudio, stopSilentAudio, 
+  playCountdownPip, playStartWhistle, playVictoryChime 
+} from './audio';
 import { ZodDailyPlan } from '../../domain/schemas/plan';
 import drillsData from '../../data/drills/badminton.json';
 
@@ -43,15 +46,18 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
     }
   }, [accumulatedSeconds, currentBlock, state]);
 
+  const lastPipRef = useRef<number | null>(null);
+
   const start = () => {
     setState('running');
     startedAtRef.current = Date.now();
     unlockAudio();
+    playStartWhistle();
     
     // Play initial cue
     if (currentBlock) {
        const drillName = drillMap.get(currentBlock.drill_id) || currentBlock.drill_id;
-       playAudioCue(`Starting ${drillName}. ${currentBlock.cue}`);
+       setTimeout(() => playAudioCue(`Starting ${drillName}. ${currentBlock.cue}`), 350);
     }
   };
 
@@ -67,6 +73,7 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
     setState('running');
     startedAtRef.current = Date.now();
     unlockAudio();
+    playStartWhistle();
   };
 
   const handleNext = () => {
@@ -75,21 +82,33 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
       setAccumulatedSeconds(0);
       accumulatedRef.current = 0;
       startedAtRef.current = Date.now();
-    unlockAudio();
+      unlockAudio();
+      playStartWhistle();
       
       const nextBlock = plan.blocks[blockIndex + 1];
       const nextName = drillMap.get(nextBlock.drill_id) || nextBlock.drill_id;
-      playAudioCue(`Next: ${nextName}. ${nextBlock.cue}`);
+      setTimeout(() => playAudioCue(`Next: ${nextName}. ${nextBlock.cue}`), 350);
     } else {
       setState('done');
       stopSilentAudio();
-      playAudioCue("Workout complete. Great job!");
+      playVictoryChime();
+      setTimeout(() => playAudioCue("Workout complete. Incredible effort!"), 500);
     }
   };
 
   const remainingSecondsForBlock = currentBlock 
     ? Math.max(0, currentBlock.minutes * 60 - accumulatedSeconds) 
     : 0;
+
+  // Sound countdown pips at 3, 2, 1 seconds before drill completion
+  useEffect(() => {
+    if (state === 'running' && remainingSecondsForBlock > 0 && remainingSecondsForBlock <= 3) {
+      if (lastPipRef.current !== remainingSecondsForBlock) {
+        lastPipRef.current = remainingSecondsForBlock;
+        playCountdownPip();
+      }
+    }
+  }, [state, remainingSecondsForBlock]);
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60).toString().padStart(2, '0');

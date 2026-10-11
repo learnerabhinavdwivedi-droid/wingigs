@@ -31,6 +31,59 @@ export function stopSilentAudio() {
   }
 }
 
+let sharedAudioCtx: AudioContext | null = null;
+
+function getAudioContext(): AudioContext | null {
+  if (typeof window === 'undefined') return null;
+  if (!sharedAudioCtx) {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioCtx) {
+      sharedAudioCtx = new AudioCtx();
+    }
+  }
+  if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+    sharedAudioCtx.resume().catch(() => {});
+  }
+  return sharedAudioCtx;
+}
+
+export function playAcousticBeep(freq = 880, duration = 0.12, type: OscillatorType = 'sine') {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch (err) {
+    // Ignore audio context errors gracefully
+  }
+}
+
+export function playCountdownPip() {
+  playAcousticBeep(880, 0.1, 'sine');
+}
+
+export function playStartWhistle() {
+  playAcousticBeep(1200, 0.22, 'triangle');
+  setTimeout(() => playAcousticBeep(1600, 0.28, 'sine'), 120);
+}
+
+export function playVictoryChime() {
+  const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+  notes.forEach((freq, idx) => {
+    setTimeout(() => {
+      playAcousticBeep(freq, 0.35, 'triangle');
+    }, idx * 140);
+  });
+}
+
 export function playAudioCue(text: string) {
   if (!('speechSynthesis' in window)) return;
   

@@ -5,6 +5,7 @@ import { getAllCheckins } from '../../data/local/queries';
 import { calculateMomentum } from '../../domain/progress/momentum';
 import { getDayKey } from '../../domain/time/day_key';
 import { DayCheckin } from '../../data/local/db';
+import { computeAchievements } from '../../domain/progress/achievements';
 import Link from 'next/link';
 
 export default function ProgressPage() {
@@ -178,6 +179,53 @@ export default function ProgressPage() {
           <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-1">
             Court vs Screen Ratio
           </div>
+        </div>
+      </div>
+
+      {/* Earned Milestones & Badges (Gamification & Retention Engine) */}
+      <div className="bg-slate-900/70 border border-slate-800/80 p-5 sm:p-6 rounded-3xl shadow-xl backdrop-blur-sm">
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-800">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-lime-400 block mb-0.5">
+              Gamified Motivation
+            </span>
+            <h3 className="font-black text-lg text-white tracking-tight">
+              Earned Milestones & Badges
+            </h3>
+          </div>
+          <span className="text-xs font-bold text-slate-400 bg-slate-800 px-2.5 py-0.5 rounded-full">
+            {computeAchievements(checkins, momentum).filter(a => a.unlocked).length} of {computeAchievements(checkins, momentum).length} Unlocked
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+          {computeAchievements(checkins, momentum).map(badge => (
+            <div 
+              key={badge.id}
+              className={`p-3.5 rounded-2xl border flex flex-col justify-between transition-all ${
+                badge.unlocked
+                  ? 'bg-gradient-to-b from-slate-900 to-lime-950/20 border-lime-400/40 shadow-md shadow-lime-500/10'
+                  : 'bg-slate-950/40 border-slate-800/60 opacity-60'
+              }`}
+            >
+              <div>
+                <div className="text-3xl mb-2">{badge.icon}</div>
+                <div className={`font-black text-xs sm:text-sm tracking-tight ${badge.unlocked ? 'text-white' : 'text-slate-400'}`}>
+                  {badge.title}
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+                  {badge.description}
+                </p>
+              </div>
+
+              <div className="mt-3 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-bold">
+                <span className={badge.unlocked ? 'text-lime-400' : 'text-slate-500'}>
+                  {badge.progressText}
+                </span>
+                {badge.unlocked && <span className="text-lime-400">✓</span>}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
