@@ -5,6 +5,7 @@ import { getProfile, saveProfile, exportDatabaseToJson, importDatabaseFromJson, 
 import { UserProfile } from '../data/local/db';
 import { playAudioCue, unlockAudio } from '../features/outside-mode/audio';
 import { useRouter } from 'next/navigation';
+import { HabitReminderSection } from './HabitReminderSection';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -217,6 +218,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               Update Baseline Settings
             </button>
           </form>
+
+          {/* Daily Habit Anchor & Calendar Trigger */}
+          <HabitReminderSection />
 
           {/* Audio Coach Voice Test */}
           <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4">

@@ -40,3 +40,55 @@ export function calculateMomentum(checkins: Checkin[], todayKey: string): number
 
   return streak;
 }
+
+export interface ResilientMomentumResult {
+  streak: number;
+  shieldCharged: boolean;
+  shieldProtected: boolean;
+  activeDaysLast7: number;
+  weeklyTarget: number;
+}
+
+export function calculateResilientMomentum(
+  checkins: Checkin[], 
+  todayKey: string, 
+  weeklyTarget = 3
+): ResilientMomentumResult {
+  const strictStreak = calculateMomentum(checkins, todayKey);
+  const completedDays = new Set(checkins.filter(c => c.completed).map(c => c.dayKey));
+
+  // Count active days in the last 7 calendar days
+  let activeDaysLast7 = 0;
+  const cursor = new Date(todayKey);
+  for (let i = 0; i < 7; i++) {
+    const k = cursor.toISOString().split('T')[0];
+    if (completedDays.has(k)) {
+      activeDaysLast7++;
+    }
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  // If strict streak is 0, check if yesterday was an absorbed recovery day
+  let shieldProtected = false;
+  let effectiveStreak = strictStreak;
+
+  if (strictStreak === 0 && checkins.length > 0) {
+    const today = new Date(todayKey);
+    const dayBeforeYesterday = new Date(today);
+    dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
+    const dbyKey = dayBeforeYesterday.toISOString().split('T')[0];
+    
+    if (completedDays.has(dbyKey)) {
+      shieldProtected = true;
+      effectiveStreak = calculateMomentum(checkins, dbyKey);
+    }
+  }
+
+  return {
+    streak: Math.max(strictStreak, effectiveStreak),
+    shieldCharged: !shieldProtected,
+    shieldProtected,
+    activeDaysLast7,
+    weeklyTarget
+  };
+}

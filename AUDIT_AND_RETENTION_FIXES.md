@@ -93,15 +93,17 @@ habit reminder     guilt tracker   no shareable badges        shaming metrics
 
 | File | Fix Description | Impact on Retention |
 | :--- | :--- | :--- |
+| [`src/domain/progress/momentum.ts`](file:///d:/wingigs/bahar/src/domain/progress/momentum.ts) | Implemented `calculateResilientMomentum` with Recovery Shield (1-day rest buffer) and weekly consistency targets. | Critical: Turns failure-tolerance into a core retention game mechanic. |
+| [`src/components/HabitReminderSection.tsx`](file:///d:/wingigs/bahar/src/components/HabitReminderSection.tsx) | Daily training habit anchor, Web Notification push alert, 1-tap Google Calendar & Apple .ICS sync. | High: Solves the external habit trigger problem. |
+| [`src/app/buddy/page.tsx`](file:///d:/wingigs/bahar/src/app/buddy/page.tsx) | Added Weekly Consistency Duel (You vs Partner) + WhatsApp deep-link sharing. | High: Facilitates peer invitation and retention duels. |
 | [`src/features/outside-mode/audio.ts`](file:///d:/wingigs/bahar/src/features/outside-mode/audio.ts) | Added native Web Audio oscillators for whistles, countdown pips, and victory chords. | High: Audible in wind and gym environments without interrupting music. |
 | [`src/features/outside-mode/useOutsideEngine.ts`](file:///d:/wingigs/bahar/src/features/outside-mode/useOutsideEngine.ts) | Added 3-second countdown audio cues and start whistles. | High: Enhances athletic interval precision. |
 | [`src/components/ConfettiCelebration.tsx`](file:///d:/wingigs/bahar/src/components/ConfettiCelebration.tsx) | HTML5 Canvas particle confetti burst on completion. | Very High: Delivers critical post-workout dopamine hit. |
 | [`src/app/outside/page.tsx`](file:///d:/wingigs/bahar/src/app/outside/page.tsx) | Confetti trigger + 1-tap "Share Accomplishment" card generator. | High: Drives viral buddy and social sharing. |
 | [`src/components/PWAInstallBanner.tsx`](file:///d:/wingigs/bahar/src/components/PWAInstallBanner.tsx) | Standalone install banner for iOS and Android. | Critical: Converts web tab visitors into home screen app users. |
 | [`src/domain/progress/achievements.ts`](file:///d:/wingigs/bahar/src/domain/progress/achievements.ts) | Badges & Milestones engine (First Sweat, 3-Day Dynamo, Century Club). | Very High: Creates long-term goal-directed motivation. |
-| [`src/app/progress/page.tsx`](file:///d:/wingigs/bahar/src/app/progress/page.tsx) | Visual Milestones grid with progress meters. | High: Prevents single-day streak reset despair. |
+| [`src/app/progress/page.tsx`](file:///d:/wingigs/bahar/src/app/progress/page.tsx) | Visual Milestones grid + Recovery Shield status + 7-Day Consistency target. | High: Prevents single-day streak reset despair. |
 | [`src/app/spots/page.tsx`](file:///d:/wingigs/bahar/src/app/spots/page.tsx) | Favorite bookmarking (`⭐`), Saved filter chip, "Train Here" CTA. | High: Reduces time-to-session from court directory. |
-| [`src/app/buddy/page.tsx`](file:///d:/wingigs/bahar/src/app/buddy/page.tsx) | WhatsApp deep-link sharing + celebratory high-five cheer. | High: Facilitates peer invitation and retention duels. |
 | [`src/app/ScreenTracker.tsx`](file:///d:/wingigs/bahar/src/app/ScreenTracker.tsx) | Exempts active outside workout mode from passive screen idling. | High: Eliminates user frustration and negative shaming. |
 | [`public/manifest.json`](file:///d:/wingigs/bahar/public/manifest.json) | Corrected theme and background colors to athletic dark `#090d16` and lime `#84cc16`. | High: Ensures native look and feel when launched from home screen. |
 

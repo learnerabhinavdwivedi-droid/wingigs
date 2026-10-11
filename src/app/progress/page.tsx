@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getAllCheckins } from '../../data/local/queries';
-import { calculateMomentum } from '../../domain/progress/momentum';
+import { calculateMomentum, calculateResilientMomentum, ResilientMomentumResult } from '../../domain/progress/momentum';
 import { getDayKey } from '../../domain/time/day_key';
 import { DayCheckin } from '../../data/local/db';
 import { computeAchievements } from '../../domain/progress/achievements';
@@ -11,6 +11,13 @@ import Link from 'next/link';
 export default function ProgressPage() {
   const [checkins, setCheckins] = useState<DayCheckin[]>([]);
   const [momentum, setMomentum] = useState(0);
+  const [resilient, setResilient] = useState<ResilientMomentumResult>({
+    streak: 0,
+    shieldCharged: true,
+    shieldProtected: false,
+    activeDaysLast7: 0,
+    weeklyTarget: 3
+  });
 
   useEffect(() => {
     async function load() {
@@ -19,8 +26,9 @@ export default function ProgressPage() {
       all.sort((a, b) => b.dayKey.localeCompare(a.dayKey));
       setCheckins(all);
       
-      const streak = calculateMomentum(all, getDayKey());
-      setMomentum(streak);
+      const res = calculateResilientMomentum(all, getDayKey(), 3);
+      setResilient(res);
+      setMomentum(res.streak);
     }
     load();
   }, []);
@@ -74,23 +82,44 @@ export default function ProgressPage() {
           <div className="absolute top-0 right-0 w-48 h-48 bg-lime-500/10 rounded-full blur-3xl pointer-events-none" />
           
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">🔥</span>
-              <h2 className="text-xs font-black uppercase tracking-widest text-lime-400">
-                Momentum Streak
-              </h2>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔥</span>
+                <h2 className="text-xs font-black uppercase tracking-widest text-lime-400">
+                  Momentum Streak
+                </h2>
+              </div>
+
+              {/* Recovery Shield Badge */}
+              <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1 ${
+                resilient.shieldProtected
+                  ? 'bg-amber-400/15 text-amber-300 border-amber-400/30'
+                  : 'bg-sky-400/15 text-sky-300 border-sky-400/30'
+              }`}>
+                <span>{resilient.shieldProtected ? '🛡️ Rest Shield Active' : '🛡️ Shield Ready'}</span>
+              </span>
             </div>
             
             <div className="text-6xl sm:text-7xl font-black tracking-tight my-2 text-white flex items-baseline gap-2">
               <span>{momentum}</span>
               <span className="text-base text-slate-400 font-bold uppercase tracking-wider">Days</span>
             </div>
+
+            {/* Weekly Target Progress */}
+            <div className="flex items-center gap-2 my-2 text-xs font-bold text-slate-300">
+              <span>Target:</span>
+              <span className="text-lime-400">{resilient.activeDaysLast7} of {resilient.weeklyTarget} sessions</span>
+              <span className="text-slate-500">•</span>
+              <span className="text-slate-400">Last 7 Days</span>
+            </div>
           </div>
 
           <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed mt-2">
             {momentum === 0 
               ? 'Start your momentum today. Rest days within smart envelopes keep your streak alive!' 
-              : `${momentum} active days locked in. Consistency built on failure-tolerant planning.`}
+              : resilient.shieldProtected
+                ? 'Your Recovery Shield absorbed your planned rest day! Streak protected.'
+                : `${momentum} active days locked in. Consistency built on failure-tolerant planning.`}
           </p>
         </div>
 

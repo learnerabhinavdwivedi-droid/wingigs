@@ -6,6 +6,7 @@ import { UserProfile } from '../../data/local/db';
 import { playAudioCue, unlockAudio } from '../../features/outside-mode/audio';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { HabitReminderSection } from '../../components/HabitReminderSection';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -204,9 +205,11 @@ export default function SettingsPage() {
           </button>
         </form>
 
-        {/* Right Column: Audio Coach & Data Vault */}
+        {/* Right Column: Habit Anchor, Audio Coach & Data Vault */}
         <div className="space-y-6">
           
+          <HabitReminderSection />
+
           {/* Audio Coach Voice Test */}
           <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-6 shadow-xl space-y-3 backdrop-blur-sm">
             <h3 className="text-sm font-black uppercase tracking-wider text-slate-300">

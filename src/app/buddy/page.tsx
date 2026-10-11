@@ -141,6 +141,35 @@ export default function BuddyPage() {
               </span>
             </div>
 
+            {/* Weekly Accountability Duel Card */}
+            <div className="bg-gradient-to-r from-sky-950/60 via-slate-950 to-lime-950/40 border border-slate-800 rounded-2xl p-4 mb-4 flex flex-col gap-2.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-black text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>⚔️</span>
+                  <span>Weekly Consistency Duel</span>
+                </span>
+                <span className="text-[10px] font-bold text-slate-400">Target: 3 Sessions</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">You</div>
+                  <div className="text-base font-black text-lime-400">2 / 3 Logged</div>
+                  <div className="w-full bg-slate-950 h-1.5 rounded-full mt-1.5 overflow-hidden">
+                    <div className="bg-lime-400 h-full w-2/3" />
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Partner</div>
+                  <div className="text-base font-black text-sky-400">2 / 3 Logged</div>
+                  <div className="w-full bg-slate-950 h-1.5 rounded-full mt-1.5 overflow-hidden">
+                    <div className="bg-sky-400 h-full w-2/3" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-4">
               {buddies.map(b => (
                 <div 
