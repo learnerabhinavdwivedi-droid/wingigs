@@ -2,7 +2,7 @@ import { TierFunction } from '../callModel';
 
 // This is a placeholder for a real on-device implementation
 // like using WebGPU and @mlc-ai/web-llm
-export const onDeviceTier: TierFunction = async (prompt: string, signal?: AbortSignal) => {
+export const onDeviceTier: TierFunction = async () => {
   // In a full implementation, we'd dynamically import the heavy ML library here
   // to avoid blocking the main bundle for devices that can't run it.
   

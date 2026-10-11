@@ -62,16 +62,17 @@ export default function SpotsPage() {
   const [filterSport, setFilterSport] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('bahar_favorite_spots');
-      if (stored) {
-        setFavoriteIds(JSON.parse(stored));
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('bahar_favorite_spots');
+        if (stored) return JSON.parse(stored);
+      } catch {
+        // Fall back
       }
-    } catch (e) {}
-  }, []);
+    }
+    return [];
+  });
 
   const toggleFavorite = (id: string) => {
     const next = favoriteIds.includes(id) 
@@ -80,7 +81,9 @@ export default function SpotsPage() {
     setFavoriteIds(next);
     try {
       localStorage.setItem('bahar_favorite_spots', JSON.stringify(next));
-    } catch (e) {}
+    } catch {
+      // Ignore storage error
+    }
   };
   
   // New spot form state
@@ -103,7 +106,7 @@ export default function SpotsPage() {
         if (data && data.length > 0) {
           setSpots([...data, ...DEFAULT_SPOTS.filter(d => !data.some(remote => remote.name === d.name))]);
         }
-      } catch (err) {
+      } catch {
         // Fallback to default spots
       }
     };
@@ -144,7 +147,7 @@ export default function SpotsPage() {
             tip: created.tip
           }
         ]);
-      } catch (err) {
+      } catch {
         // Local fallback preserved in state
       }
     }
@@ -281,7 +284,7 @@ export default function SpotsPage() {
 
               {spot.tip && (
                 <div className="text-xs leading-relaxed italic text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/60 border-l-2 border-lime-500 dark:border-lime-400 p-3 rounded-r-xl mb-4">
-                  "{spot.tip}"
+                  &ldquo;{spot.tip}&rdquo;
                 </div>
               )}
             </div>
@@ -343,7 +346,7 @@ export default function SpotsPage() {
             <div className="text-4xl mb-3">📍</div>
             <div className="text-base font-bold text-slate-900 dark:text-white">No spots found matching your search.</div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
-              Try adjusting your filter or tap "+ Add Training Spot" to add the first one in this area.
+              Try adjusting your filter or tap &quot;+ Add Training Spot&quot; to add the first one in this area.
             </p>
           </div>
         )}

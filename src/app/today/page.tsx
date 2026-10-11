@@ -3,16 +3,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDayEngine } from '../../features/day-engine/useDayEngine';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Reading } from '../../domain/schemas/plan';
 import drillsData from '../../data/drills/badminton.json';
 import { playAudioCue, unlockAudio } from '../../features/outside-mode/audio';
+
+interface ActiveModalDrill {
+  drill_id: string;
+  minutes: number;
+  cue: string;
+  info?: (typeof drillsData.drills)[0];
+}
 
 export default function TodayPage() {
   const { state, plan, profile, envelope, submitReading, applyPlanB } = useDayEngine();
   const router = useRouter();
   const [showCheckin, setShowCheckin] = useState(false);
-  const [activeDrillModal, setActiveDrillModal] = useState<any>(null);
+  const [activeDrillModal, setActiveDrillModal] = useState<ActiveModalDrill | null>(null);
   const [playingCue, setPlayingCue] = useState(false);
   const [showWarmup, setShowWarmup] = useState(false);
   
@@ -130,7 +136,7 @@ export default function TodayPage() {
         <div className="w-14 h-14 bg-rose-500/10 border border-rose-500/30 text-rose-500 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mb-4">
           ⚠️
         </div>
-        <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">Could not build today's plan</h2>
+        <h2 className="text-lg font-black text-slate-900 dark:text-white mb-1">Could not build today&apos;s plan</h2>
         <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">Local engine hit an unexpected parameter.</p>
         <button 
           onClick={() => submitReading(reading)}
@@ -156,7 +162,7 @@ export default function TodayPage() {
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
-            Today's Plan
+            Today&apos;s Plan
           </h1>
         </div>
 
@@ -200,7 +206,7 @@ export default function TodayPage() {
                   {plan.headline}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 italic leading-relaxed">
-                  "{plan.why_this_plan}"
+                  &ldquo;{plan.why_this_plan}&rdquo;
                 </p>
               </div>
 
@@ -332,7 +338,7 @@ export default function TodayPage() {
                               </span>
                             </div>
                             <div className="text-xs text-slate-500 dark:text-slate-400 italic mt-0.5">
-                              "{block.cue}"
+                              &ldquo;{block.cue}&rdquo;
                             </div>
                           </div>
                         </div>
@@ -470,7 +476,7 @@ export default function TodayPage() {
                   <select
                     aria-label="Sleep"
                     value={reading.sleep}
-                    onChange={e => setReading({ ...reading, sleep: e.target.value as any })}
+                    onChange={e => setReading({ ...reading, sleep: e.target.value as Reading['sleep'] })}
                     className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:border-lime-500 dark:focus:border-lime-400 outline-none"
                   >
                     <option value="poor">🥱 Poor</option>
@@ -484,7 +490,7 @@ export default function TodayPage() {
                   <select
                     aria-label="Energy"
                     value={reading.energy}
-                    onChange={e => setReading({ ...reading, energy: Number(e.target.value) as any })}
+                    onChange={e => setReading({ ...reading, energy: Number(e.target.value) as Reading['energy'] })}
                     className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:border-lime-500 dark:focus:border-lime-400 outline-none"
                   >
                     <option value="1">1 - Low</option>
@@ -498,7 +504,7 @@ export default function TodayPage() {
                   <select
                     aria-label="Soreness"
                     value={reading.soreness}
-                    onChange={e => setReading({ ...reading, soreness: e.target.value as any })}
+                    onChange={e => setReading({ ...reading, soreness: e.target.value as Reading['soreness'] })}
                     className="w-full text-xs font-bold p-2.5 rounded-xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:border-lime-500 dark:focus:border-lime-400 outline-none"
                   >
                     <option value="none">None</option>
@@ -530,7 +536,7 @@ export default function TodayPage() {
             </div>
             
             <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-3">
-              Encountered friction? Don't break the streak—pivot your session volume immediately.
+              Encountered friction? Don&apos;t break the streak—pivot your session volume immediately.
             </p>
 
             <div className="grid grid-cols-2 gap-2">
@@ -581,7 +587,7 @@ export default function TodayPage() {
               <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4">
                 <span className="text-slate-500 dark:text-slate-400 font-bold block mb-1">Focus Cue:</span>
                 <span className="text-lime-700 dark:text-lime-300 font-semibold text-sm italic">
-                  "{activeDrillModal.cue}"
+                  &ldquo;{activeDrillModal.cue}&rdquo;
                 </span>
               </div>
 

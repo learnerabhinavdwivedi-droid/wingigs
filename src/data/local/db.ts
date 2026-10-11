@@ -20,9 +20,11 @@ export interface DayCheckin {
   screenSeconds?: number;
 }
 
+import { ZodDailyPlan } from '../../domain/schemas/plan';
+
 export interface StoredPlan {
   dayKey: string;
-  plan: any; // Stored JSON of ZodDailyPlan
+  plan: ZodDailyPlan;
 }
 
 export class BaharDB extends Dexie {

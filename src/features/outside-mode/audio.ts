@@ -36,7 +36,8 @@ let sharedAudioCtx: AudioContext | null = null;
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null;
   if (!sharedAudioCtx) {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    const webkitWindow = window as unknown as { webkitAudioContext?: typeof AudioContext };
+    const AudioCtx = window.AudioContext || webkitWindow.webkitAudioContext;
     if (AudioCtx) {
       sharedAudioCtx = new AudioCtx();
     }
@@ -61,7 +62,7 @@ export function playAcousticBeep(freq = 880, duration = 0.12, type: OscillatorTy
     gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + duration);
-  } catch (err) {
+  } catch {
     // Ignore audio context errors gracefully
   }
 }

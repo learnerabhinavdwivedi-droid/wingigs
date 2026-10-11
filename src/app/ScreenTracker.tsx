@@ -6,10 +6,12 @@ import { getDayKey } from '../domain/time/day_key';
 import { db } from '../data/local/db';
 
 export function ScreenTracker() {
-  const lastActiveRef = useRef<number>(Date.now());
+  const lastActiveRef = useRef<number | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
+    lastActiveRef.current = Date.now();
+
     const handleVisibility = () => {
       // Never count time spent training in Outside mode as passive screen time
       if (pathname === '/outside') {
@@ -19,7 +21,8 @@ export function ScreenTracker() {
 
       if (document.visibilityState === 'hidden') {
         const now = Date.now();
-        const diff = Math.floor((now - lastActiveRef.current) / 1000);
+        const start = lastActiveRef.current ?? now;
+        const diff = Math.floor((now - start) / 1000);
         
         if (diff > 0 && diff < 86400) {
           const dayKey = getDayKey();

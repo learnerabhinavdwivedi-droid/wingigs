@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getAllCheckins } from '../../data/local/queries';
-import { calculateMomentum, calculateResilientMomentum, ResilientMomentumResult } from '../../domain/progress/momentum';
+import { calculateResilientMomentum, ResilientMomentumResult } from '../../domain/progress/momentum';
 import { getDayKey } from '../../domain/time/day_key';
 import { DayCheckin } from '../../data/local/db';
 import { computeAchievements } from '../../domain/progress/achievements';
@@ -63,7 +63,7 @@ export default function ProgressPage() {
             href="/today" 
             className="text-xs font-extrabold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-xl hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
           >
-            &larr; Today's Plan
+            &larr; Today&apos;s Plan
           </Link>
           <Link
             href="/outside"
@@ -308,13 +308,13 @@ export default function ProgressPage() {
                 <div className="text-4xl mb-3">🏸</div>
                 <div className="text-sm font-bold text-slate-900 dark:text-white">No completed workouts yet.</div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto">
-                  Hit "Train Now" to run today's court session and record your first log.
+                  Hit &quot;Train Now&quot; to run today&apos;s court session and record your first log.
                 </p>
                 <Link
                   href="/today"
                   className="inline-block mt-4 bg-lime-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs hover:bg-lime-300 transition-colors shadow-sm"
                 >
-                  Start Today's Workout &rarr;
+                  Start Today&apos;s Workout &rarr;
                 </Link>
               </div>
             )}
@@ -340,7 +340,7 @@ export default function ProgressPage() {
               Sunday Review & Debrief
             </h4>
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-              AI coach analyzes your 7-day training consistency against passive phone screen usage to set next week's focus.
+              AI coach analyzes your 7-day training consistency against passive phone screen usage to set next week&apos;s focus.
             </p>
             
             <div className="text-xs font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">

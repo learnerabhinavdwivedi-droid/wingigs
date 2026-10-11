@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import type { Session } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../data/remote/supabase';
 
 export interface AuthUser {
@@ -13,7 +14,7 @@ export interface AuthUser {
 
 interface AuthContextType {
   user: AuthUser | null;
-  session: any | null;
+  session: Session | null;
   loading: boolean;
   isSupabaseConnected: boolean;
   signInWithPassword: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
@@ -35,7 +36,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [session, setSession] = useState<any | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -74,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setLoading(false);
               return;
             }
-          } catch (e) {
+          } catch {
             // invalid json, ignore
           }
         }
@@ -86,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializeAuth();
 
     // 3. Listen to Supabase auth state change if configured
-    let authListener: any = null;
+    let authListener: { unsubscribe: () => void } | null = null;
     if (isSupabaseConfigured) {
       try {
         const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -154,8 +155,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.setItem('bahar_auth_user', JSON.stringify(u));
           return { success: true };
         }
-      } catch (err: any) {
-        return { success: false, error: err?.message || 'Authentication error' };
+      } catch (err: unknown) {
+        const errorMsg = err instanceof Error ? err.message : 'Authentication error';
+        return { success: false, error: errorMsg };
       }
     }
 
@@ -204,8 +206,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.setItem('bahar_auth_user', JSON.stringify(u));
           return { success: true };
         }
-      } catch (err: any) {
-        return { success: false, error: err?.message || 'Sign up error' };
+      } catch (err: unknown) {
+        const errorMsg = err instanceof Error ? err.message : 'Sign up error';
+        return { success: false, error: errorMsg };
       }
     }
 

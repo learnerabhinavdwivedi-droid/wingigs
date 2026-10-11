@@ -49,8 +49,9 @@ export default function LoginPage() {
           setErrorMsg(res.error || 'Invalid email or password');
         }
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || 'Authentication error');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Authentication error';
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
@@ -110,7 +111,7 @@ export default function LoginPage() {
                 onClick={() => router.push('/today')}
                 className="flex-1 py-3 rounded-xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-black text-xs transition-colors shadow-md shadow-lime-400/20"
               >
-                Go to Today's Plan →
+                Go to Today&apos;s Plan &rarr;
               </button>
               <button
                 type="button"

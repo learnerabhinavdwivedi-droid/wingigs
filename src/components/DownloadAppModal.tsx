@@ -8,28 +8,32 @@ interface DownloadAppModalProps {
   onClose: () => void;
 }
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 export function DownloadAppModal({ isOpen, onClose }: DownloadAppModalProps) {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
+
+  const [isIOS] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+  });
+
+  const [isStandalone] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const nav = window.navigator as unknown as { standalone?: boolean };
+    return window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    if (
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true
-    ) {
-      setIsStandalone(true);
-    }
-
-    const ua = window.navigator.userAgent.toLowerCase();
-    setIsIOS(/iphone|ipad|ipod/.test(ua));
-
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
@@ -68,7 +72,7 @@ export function DownloadAppModal({ isOpen, onClose }: DownloadAppModalProps) {
             <BaharLogo size={42} />
             <div>
               <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-                Download & Install Bahar
+                Download &amp; Install Bahar
               </h2>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
                 Official Progressive Web App (PWA)
@@ -125,7 +129,7 @@ export function DownloadAppModal({ isOpen, onClose }: DownloadAppModalProps) {
                   <div className="flex items-center gap-2">
                     <span className="text-base">🍎</span>
                     <strong className="text-xs font-black text-sky-900 dark:text-sky-300 uppercase tracking-wider">
-                      iPhone & iPad Install Steps:
+                      iPhone &amp; iPad Install Steps:
                     </strong>
                   </div>
                   <ol className="text-xs text-slate-700 dark:text-slate-300 space-y-2 list-decimal list-inside leading-relaxed pl-1">
@@ -133,10 +137,10 @@ export function DownloadAppModal({ isOpen, onClose }: DownloadAppModalProps) {
                       In Safari, tap the <strong>Share</strong> button (box with an arrow pointing up <span className="font-mono text-sm">⎋</span>) at the bottom of your screen.
                     </li>
                     <li>
-                      Scroll down the options list and tap <strong>"Add to Home Screen"</strong> (with the plus icon <span className="font-mono text-sm">⊕</span>).
+                      Scroll down the options list and tap <strong>&quot;Add to Home Screen&quot;</strong> (with the plus icon <span className="font-mono text-sm">⊕</span>).
                     </li>
                     <li>
-                      Tap <strong>"Add"</strong> in the top-right corner. Bahar will appear directly on your home screen!
+                      Tap <strong>&quot;Add&quot;</strong> in the top-right corner. Bahar will appear directly on your home screen!
                     </li>
                   </ol>
                 </div>
@@ -161,7 +165,7 @@ export function DownloadAppModal({ isOpen, onClose }: DownloadAppModalProps) {
                       Alternative Manual Installation:
                     </p>
                     <p>
-                      Click the <strong>Install icon</strong> in your browser's address bar, or tap the three dots (<span className="font-mono">⋮</span>) menu and choose <strong>"Install app"</strong>.
+                      Click the <strong>Install icon</strong> in your browser&apos;s address bar, or tap the three dots (<span className="font-mono">⋮</span>) menu and choose <strong>&quot;Install app&quot;</strong>.
                     </p>
                   </div>
                 </div>

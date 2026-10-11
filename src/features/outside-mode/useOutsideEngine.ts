@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { 
   playAudioCue, unlockAudio, stopSilentAudio, 
   playCountdownPip, playStartWhistle, playVictoryChime 
@@ -12,13 +12,34 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
   const [state, setState] = useState<TimerState>('idle');
   const [blockIndex, setBlockIndex] = useState(0);
   const [accumulatedSeconds, setAccumulatedSeconds] = useState(0);
-  const [tick, setTick] = useState(0);
 
   const startedAtRef = useRef<number | null>(null);
   const accumulatedRef = useRef<number>(0);
+  const lastPipRef = useRef<number | null>(null);
   
   const currentBlock = plan?.blocks[blockIndex];
-  
+  const drillMap = useMemo(() => new Map(drillsData.drills.map(d => [d.id, d.name])), []);
+
+  const handleNext = useCallback(() => {
+    if (plan && blockIndex < plan.blocks.length - 1) {
+      setBlockIndex(prev => prev + 1);
+      setAccumulatedSeconds(0);
+      accumulatedRef.current = 0;
+      startedAtRef.current = Date.now();
+      unlockAudio();
+      playStartWhistle();
+      
+      const nextBlock = plan.blocks[blockIndex + 1];
+      const nextName = drillMap.get(nextBlock.drill_id) || nextBlock.drill_id;
+      setTimeout(() => playAudioCue(`Next: ${nextName}. ${nextBlock.cue}`), 350);
+    } else {
+      setState('done');
+      stopSilentAudio();
+      playVictoryChime();
+      setTimeout(() => playAudioCue("Workout complete. Incredible effort!"), 500);
+    }
+  }, [plan, blockIndex, drillMap]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (state === 'running') {
@@ -26,27 +47,18 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
         if (startedAtRef.current) {
           const now = Date.now();
           const diff = Math.floor((now - startedAtRef.current) / 1000);
-          setAccumulatedSeconds(accumulatedRef.current + diff);
-          setTick(t => t + 1);
+          const currentTotal = accumulatedRef.current + diff;
+          setAccumulatedSeconds(currentTotal);
+
+          // Auto-advance when current drill reaches block time
+          if (currentBlock && currentTotal >= currentBlock.minutes * 60) {
+            handleNext();
+          }
         }
       }, 500);
     }
     return () => clearInterval(interval);
-  }, [state, blockIndex]);
-
-  const totalMinutes = plan?.blocks.reduce((acc, b) => acc + b.minutes, 0) || 1;
-  const drillMap = new Map(drillsData.drills.map(d => [d.id, d.name]));
-
-  // Auto-advance
-  useEffect(() => {
-    if (state === 'running' && currentBlock) {
-      if (accumulatedSeconds >= currentBlock.minutes * 60) {
-        handleNext();
-      }
-    }
-  }, [accumulatedSeconds, currentBlock, state]);
-
-  const lastPipRef = useRef<number | null>(null);
+  }, [state, blockIndex, currentBlock, handleNext]);
 
   const start = () => {
     setState('running');
@@ -74,26 +86,6 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
     startedAtRef.current = Date.now();
     unlockAudio();
     playStartWhistle();
-  };
-
-  const handleNext = () => {
-    if (plan && blockIndex < plan.blocks.length - 1) {
-      setBlockIndex(prev => prev + 1);
-      setAccumulatedSeconds(0);
-      accumulatedRef.current = 0;
-      startedAtRef.current = Date.now();
-      unlockAudio();
-      playStartWhistle();
-      
-      const nextBlock = plan.blocks[blockIndex + 1];
-      const nextName = drillMap.get(nextBlock.drill_id) || nextBlock.drill_id;
-      setTimeout(() => playAudioCue(`Next: ${nextName}. ${nextBlock.cue}`), 350);
-    } else {
-      setState('done');
-      stopSilentAudio();
-      playVictoryChime();
-      setTimeout(() => playAudioCue("Workout complete. Incredible effort!"), 500);
-    }
   };
 
   const remainingSecondsForBlock = currentBlock 
@@ -133,4 +125,3 @@ export function useOutsideEngine(plan: ZodDailyPlan | null) {
     handleNext
   };
 }
-

@@ -27,7 +27,7 @@ export default function BuddyPage() {
     }
   ]);
   const [copied, setCopied] = useState(false);
-  const [inviteCode, setInviteCode] = useState('BAHAR-COURT-77');
+  const [inviteCode] = useState('BAHAR-COURT-77');
   const [inputCode, setInputCode] = useState('');
   const [linking, setLinking] = useState(false);
   const [pairSuccess, setPairSuccess] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export default function BuddyPage() {
         if (data && data.length > 0) {
           setBuddies(prev => [...data, ...prev.filter(b => !data.some(d => d.id === b.id))]);
         }
-      } catch (err) {
+      } catch {
         // Fallback to local state
       }
     };
@@ -90,14 +90,18 @@ export default function BuddyPage() {
             slot_time: newBuddy.slot_time
           }
         ]);
-      } catch (err) {
+      } catch {
         // Local state preserved
       }
     }
   };
 
-  const handleSendCheer = (partnerName: string) => {
+  const handleSendCheer = (partnerName?: string) => {
     setCheerSent(true);
+    if (partnerName) {
+      setPairSuccess(`High-five sent to ${partnerName}! 🏸`);
+      setTimeout(() => setPairSuccess(null), 3000);
+    }
     setTimeout(() => setCheerSent(false), 3000);
   };
 
@@ -122,7 +126,7 @@ export default function BuddyPage() {
           href="/today" 
           className="self-start sm:self-auto text-xs font-extrabold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-xl hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
         >
-          &larr; Today's Plan
+          &larr; Today&apos;s Plan
         </Link>
       </div>
 
@@ -228,7 +232,7 @@ export default function BuddyPage() {
             <span className="text-xl leading-none">🛡️</span>
             <div>
               <strong className="text-slate-900 dark:text-white block mb-1 text-sm font-bold">Privacy-First Architecture:</strong>
-              Only your workout completion status and duration are synchronized. Your soreness notes, medical details, and personal routines stay 100% private in your device's IndexedDB.
+              Only your workout completion status and duration are synchronized. Your soreness notes, medical details, and personal routines stay 100% private in your device&apos;s IndexedDB.
             </div>
           </div>
         </div>
@@ -242,7 +246,7 @@ export default function BuddyPage() {
               Link Partner
             </span>
             <h3 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight mb-2">
-              Enter Partner's Invite Code
+              Enter Partner&apos;s Invite Code
             </h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
               Got a pairing code from a training friend? Enter it below to link your streak without sharing private health logs.

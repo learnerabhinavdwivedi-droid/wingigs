@@ -3,30 +3,32 @@
 import React, { useState, useEffect } from 'react';
 import { BaharLogo } from './BaharLogo';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 export function PWAInstallBanner() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+
+  const [isIOS] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+  });
+
+  const [isStandalone] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const nav = window.navigator as unknown as { standalone?: boolean };
+    return window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
+  });
 
   useEffect(() => {
-    // Check if already running in standalone PWA mode
-    if (
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true
-    ) {
-      setIsStandalone(true);
-      return;
-    }
-
-    // Check if iOS
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-    setIsIOS(isIosDevice);
+    if (isStandalone) return;
 
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
       // Don't show if user previously dismissed in this session
       if (!sessionStorage.getItem('bahar_pwa_dismissed')) {
         setShowBanner(true);
@@ -35,16 +37,17 @@ export function PWAInstallBanner() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
 
-    // If iOS and not standalone, show after 3 seconds on first visit
-    if (isIosDevice && !sessionStorage.getItem('bahar_pwa_dismissed')) {
-      const timer = setTimeout(() => setShowBanner(true), 3500);
-      return () => clearTimeout(timer);
+    // If iOS and not standalone, show after 3.5 seconds on first visit
+    let timer: NodeJS.Timeout | undefined;
+    if (isIOS && !sessionStorage.getItem('bahar_pwa_dismissed')) {
+      timer = setTimeout(() => setShowBanner(true), 3500);
     }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      if (timer) clearTimeout(timer);
     };
-  }, []);
+  }, [isStandalone, isIOS]);
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {

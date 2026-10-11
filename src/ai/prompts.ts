@@ -58,10 +58,11 @@ RULES:
 
 /**
  * Builds a prompt for the 5-minute baseline fitness benchmark.
+ * Privacy-preserving: zero location or personal information is included.
  */
-export function buildBaselinePrompt(sport: string, level: string, city: string): PromptPayload {
+export function buildBaselinePrompt(sport: string, level: string): PromptPayload {
   const systemPrompt = `You are a sports-science coach creating a quick 5-minute physical benchmark test. Return strictly valid JSON: { "test": "description" }`;
-  const userPrompt = `The athlete is a ${level} at ${sport} training in ${city}.
+  const userPrompt = `The athlete is a ${level} at ${sport}.
 Give them ONE simple, safe 5-minute physical baseline drill to gauge their footwork cadence or stamina.
 Return strictly JSON:
 {

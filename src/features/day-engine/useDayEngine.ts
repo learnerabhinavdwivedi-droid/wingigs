@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getDayKey } from '../../domain/time/day_key';
 import { getProfile, getAllCheckins, getStoredPlan, savePlan, getCompletedHistoricalPlans } from '../../data/local/queries';
-import { buildDayEnvelope, EnvelopeContext } from '../../domain/rules/envelope';
+import { buildDayEnvelope, Envelope, EnvelopeContext } from '../../domain/rules/envelope';
 import { calculateMomentum } from '../../domain/progress/momentum';
 import { callModel } from '../../ai/callModel';
 import { hostedTier } from '../../ai/tiers/hosted';
@@ -20,7 +20,7 @@ export function useDayEngine() {
   const [state, setState] = useState<DayEngineState>('loading');
   const [plan, setPlan] = useState<ZodDailyPlan | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [envelope, setEnvelope] = useState<any>(null); // store envelope for UI reasons
+  const [envelope, setEnvelope] = useState<Envelope | null>(null); // store envelope for UI reasons
 
   const generatePlanWithProfile = async (targetProfile: UserProfile, reading: Reading, obstacle?: string) => {
     setState('generating');

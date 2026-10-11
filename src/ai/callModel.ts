@@ -34,8 +34,6 @@ export async function callModel<T = ZodDailyPlan>(options: CallModelOptions<T>):
       const response = await options.tierFn(options.prompt, controller.signal);
       clearTimeout(timeoutId);
       
-      const latencyMs = Date.now() - startTime;
-      
       // Robust JSON extraction from chatty open-weight model outputs
       let rawJson = response.content;
       
@@ -55,7 +53,7 @@ export async function callModel<T = ZodDailyPlan>(options: CallModelOptions<T>):
       let parsed: unknown;
       try {
         parsed = JSON.parse(rawJson.trim());
-      } catch (e) {
+      } catch {
         throw new Error('parse_error');
       }
 
@@ -69,17 +67,18 @@ export async function callModel<T = ZodDailyPlan>(options: CallModelOptions<T>):
       // Success
       return result.data;
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       clearTimeout(timeoutId);
       const latencyMs = Date.now() - startTime;
+      const err = error instanceof Error ? error : new Error(String(error));
       
       let errorType: 'timeout' | 'parse_error' | 'validation_failed' | 'network_error' | 'other' = 'other';
       
-      if (error.name === 'AbortError') {
+      if (err.name === 'AbortError') {
         errorType = 'timeout';
-      } else if (error.message === 'parse_error' || error.message === 'validation_failed') {
-        errorType = error.message;
-      } else if (error.message && error.message.includes('fetch')) {
+      } else if (err.message === 'parse_error' || err.message === 'validation_failed') {
+        errorType = err.message;
+      } else if (err.message && err.message.includes('fetch')) {
         errorType = 'network_error';
       }
 
@@ -90,11 +89,11 @@ export async function callModel<T = ZodDailyPlan>(options: CallModelOptions<T>):
         latencyMs,
         repairCount: 0, // In this layer we haven't repaired yet, we just track parsing/validation
         errorType,
-        errorMessage: error.message
+        errorMessage: err.message
       });
 
       if (attempts > maxRetries) {
-        throw error;
+        throw err;
       }
       // Otherwise loop continues and retries
     }

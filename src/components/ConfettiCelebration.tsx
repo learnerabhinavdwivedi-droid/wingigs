@@ -56,7 +56,7 @@ export function ConfettiCelebration() {
     }
 
     let animationId: number;
-    let startTime = Date.now();
+    const startTime = Date.now();
 
     const render = () => {
       const elapsed = Date.now() - startTime;

@@ -6,6 +6,8 @@ export interface WeatherData {
   temperature: number;
   precipitation: number;
   visibility: number;
+  isFallback?: boolean;
+  resolvedCity?: string;
 }
 
 export interface Envelope {

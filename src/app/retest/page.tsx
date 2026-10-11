@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getProfile, saveProfile } from '../../data/local/queries';
 import { callModel } from '../../ai/callModel';
 import { hostedTier } from '../../ai/tiers/hosted';
+import { buildRetestPrompt } from '../../ai/prompts';
 import { z } from 'zod';
 import { UserProfile } from '../../data/local/db';
 import Link from 'next/link';
@@ -31,18 +32,13 @@ export default function RetestPage() {
     setLoading(true);
     
     try {
-      const prompt = `
-        The user is doing their 30-day retest.
-        Sport: ${profile.sport}.
-        Old Baseline Result: "${profile.baselineResult}"
-        New Retest Result: "${newResult}"
-        
-        Write a very short, honest summary comparing the two. Be blunt. If there is no improvement, say so.
-        Format as JSON: { "summary": "string" }
-      `;
+      const payload = buildRetestPrompt(
+        profile.baselineResult || '5-minute shadow footwork baseline',
+        newResult
+      );
 
       const res = await callModel({
-        prompt,
+        prompt: payload.userPrompt,
         tier: 'hosted',
         tierFn: hostedTier,
         promptVersion: 'v1-retest',
@@ -113,7 +109,7 @@ export default function RetestPage() {
               Current Benchmark Baseline
             </h2>
             <div className="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl italic">
-              "{profile.baselineResult || 'Initial baseline completed'}"
+              &ldquo;{profile.baselineResult || 'Initial baseline completed'}&rdquo;
             </div>
           </div>
 
@@ -130,7 +126,7 @@ export default function RetestPage() {
               required 
             />
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-              Enter your repetitions, speed, or subjective form score from today's retest.
+              Enter your repetitions, speed, or subjective form score from today&apos;s retest.
             </p>
           </div>
 
@@ -165,7 +161,7 @@ export default function RetestPage() {
           </div>
 
           <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl text-slate-800 dark:text-slate-200 text-sm sm:text-base leading-relaxed font-medium italic">
-            "{summary}"
+            &ldquo;{summary}&rdquo;
           </div>
 
           {/* Comparison Cards */}

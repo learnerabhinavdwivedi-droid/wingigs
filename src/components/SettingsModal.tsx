@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   getProfile, 
   saveProfile, 
-  exportDatabaseToJson, 
   importDatabaseFromJson, 
   resetDatabase,
   saveBackupToDevice,
@@ -57,6 +56,10 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           setMinutes(p.maxMinutesPerSession || 30);
           setCity(p.city || 'Seattle');
         }
+        setSavedSuccess(false);
+        setImportStatus(null);
+        setSaveSuccessMsg(null);
+        setConfirmReset(false);
       });
       checkDevicePersistence().then(persisted => {
         setIsPersisted(persisted);
@@ -67,10 +70,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         }
       });
       getDeviceStorageEstimate().then(est => setStorageEstimate(est));
-      setSavedSuccess(false);
-      setImportStatus(null);
-      setSaveSuccessMsg(null);
-      setConfirmReset(false);
     }
   }, [isOpen]);
 
@@ -122,7 +121,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       } else {
         setImportStatus('Failed to import: Invalid backup file format.');
       }
-    } catch (err) {
+    } catch {
       setImportStatus('Error reading file.');
     }
   };
@@ -323,8 +322,8 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Level</label>
                 <select
                   value={level}
-                  onChange={e => setLevel(e.target.value as any)}
-                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-medium focus:border-lime-400 outline-none"
+                  onChange={e => setLevel(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:white font-medium focus:border-lime-400 outline-none"
                 >
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>

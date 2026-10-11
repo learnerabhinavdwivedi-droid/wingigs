@@ -150,8 +150,8 @@ export async function saveBackupToDevice(): Promise<{ success: boolean; filename
         });
         return { success: true, filename };
       }
-    } catch (err: any) {
-      if (err?.name === 'AbortError') {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === 'AbortError') {
         return { success: false, filename };
       }
     }
@@ -160,7 +160,15 @@ export async function saveBackupToDevice(): Promise<{ success: boolean; filename
   // 2. File System Access API (Chrome/Edge desktop)
   if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
     try {
-      const handle = await (window as any).showSaveFilePicker({
+      const pickerWindow = window as unknown as {
+        showSaveFilePicker: (opts: {
+          suggestedName: string;
+          types: Array<{ description: string; accept: Record<string, string[]> }>;
+        }) => Promise<{
+          createWritable: () => Promise<{ write: (d: string) => Promise<void>; close: () => Promise<void> }>;
+        }>;
+      };
+      const handle = await pickerWindow.showSaveFilePicker({
         suggestedName: filename,
         types: [{
           description: 'JSON Backup File',
@@ -171,8 +179,8 @@ export async function saveBackupToDevice(): Promise<{ success: boolean; filename
       await writable.write(json);
       await writable.close();
       return { success: true, filename };
-    } catch (err: any) {
-      if (err?.name === 'AbortError') {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === 'AbortError') {
         return { success: false, filename };
       }
     }

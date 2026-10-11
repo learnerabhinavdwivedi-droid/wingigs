@@ -1,21 +1,28 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 export function HabitReminderSection() {
-  const [reminderTime, setReminderTime] = useState('07:30');
-  const [notificationStatus, setNotificationStatus] = useState<string>('default');
-  const [savedNote, setSavedNote] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
-      setNotificationStatus(Notification.permission);
+  const [reminderTime, setReminderTime] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('bahar_habit_time');
+        if (stored) return stored;
+      } catch {
+        // Fall back
+      }
     }
-    try {
-      const stored = localStorage.getItem('bahar_habit_time');
-      if (stored) setReminderTime(stored);
-    } catch (e) {}
-  }, []);
+    return '07:30';
+  });
+
+  const [notificationStatus, setNotificationStatus] = useState<string>(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      return Notification.permission;
+    }
+    return 'default';
+  });
+
+  const [savedNote, setSavedNote] = useState(false);
 
   const handleRequestPermission = async () => {
     if (typeof window === 'undefined' || !('Notification' in window)) {
@@ -39,7 +46,9 @@ export function HabitReminderSection() {
       localStorage.setItem('bahar_habit_time', val);
       setSavedNote(true);
       setTimeout(() => setSavedNote(false), 2000);
-    } catch (e) {}
+    } catch {
+      // Ignore storage errors
+    }
   };
 
   const handleDownloadICS = () => {
@@ -81,7 +90,7 @@ export function HabitReminderSection() {
             Habit Anchor
           </span>
           <h4 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
-            Daily Training Trigger & Calendar Sync
+            Daily Training Trigger &amp; Calendar Sync
           </h4>
         </div>
         <span className="text-xl">⏰</span>

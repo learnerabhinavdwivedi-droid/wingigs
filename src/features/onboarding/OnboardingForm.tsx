@@ -229,7 +229,7 @@ export function OnboardingForm() {
     setLoading(true);
     
     try {
-      const payload = buildBaselinePrompt(profile.sport, profile.level, profile.city || 'Seattle');
+      const payload = buildBaselinePrompt(profile.sport, profile.level);
       const res = await callModel({
         prompt: payload.userPrompt,
         tier: 'hosted',
@@ -239,7 +239,7 @@ export function OnboardingForm() {
       });
       setBaselineTask(res.test);
       setStep(2);
-    } catch (err) {
+    } catch {
       setBaselineTask("Do as many rapid 6-corner shadow footwork reps or burpees as you can in 1 minute. Record your count.");
       setStep(2);
     }
@@ -550,7 +550,7 @@ export function OnboardingForm() {
               <select
                 aria-label="Level"
                 value={profile.level}
-                onChange={e => setProfile({ ...profile, level: e.target.value as any })}
+                onChange={e => setProfile({ ...profile, level: e.target.value as 'beginner' | 'intermediate' | 'advanced' })}
                 className="hidden"
               >
                 <option value="beginner">Beginner</option>
@@ -699,7 +699,7 @@ export function OnboardingForm() {
               AI Coach Benchmark Assignment
             </div>
             <p className="text-sm font-semibold italic leading-relaxed text-slate-700 dark:text-slate-200">
-              "{baselineTask}"
+              &ldquo;{baselineTask}&rdquo;
             </p>
           </div>
 

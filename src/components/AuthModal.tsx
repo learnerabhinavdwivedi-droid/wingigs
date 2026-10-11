@@ -51,8 +51,9 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
           setErrorMsg(res.error || 'Invalid email or password');
         }
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || 'Authentication error occurred');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Authentication error occurred';
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }

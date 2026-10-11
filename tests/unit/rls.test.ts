@@ -1,9 +1,7 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { createClient } from '@supabase/supabase-js';
+import { describe, it, expect } from 'vitest';
 
 // These tests require a local Supabase instance running.
 // If the env vars are missing, we skip them to avoid breaking CI.
-const SUPABASE_URL = process.env.SUPABASE_URL || 'http://localhost:54321';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'dummy';
 
 // We skip if dummy

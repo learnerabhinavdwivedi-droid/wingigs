@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllCheckins } from '../../data/local/queries';
 import { callModel } from '../../ai/callModel';
 import { hostedTier } from '../../ai/tiers/hosted';
+import { buildSundayReviewPrompt } from '../../ai/prompts';
 import { z } from 'zod';
 import Link from 'next/link';
 import { playAudioCue, unlockAudio } from '../../features/outside-mode/audio';
@@ -34,22 +35,10 @@ export default function WeekReviewPage() {
           completedCount: done
         });
 
-        const logsStr = thisWeek.length > 0 
-          ? thisWeek.map(c => `${c.dayKey}: ${c.completed ? c.minutes + ' mins' : 'Missed'} (Screen: ${Math.floor((c.screenSeconds || 0)/60)} mins)`).join('\n')
-          : 'No workouts completed yet this week.';
-
-        const prompt = `
-          You are a strict, concise coach. Read these 7-day training logs for the user.
-          Logs:
-          ${logsStr}
-          
-          Write a short, punchy Sunday Review. Format as JSON matching { "review": "string" }. 
-          1. Acknowledge the reality (did they train or stare at screens?).
-          2. Give them one specific focus for next week.
-        `;
+        const payload = buildSundayReviewPrompt(done, 7, courtMins);
 
         const result = await callModel({
-          prompt,
+          prompt: payload.userPrompt,
           tier: 'hosted',
           tierFn: hostedTier,
           promptVersion: 'v1.0-review',
@@ -141,7 +130,7 @@ export default function WeekReviewPage() {
                   📋
                 </div>
                 <div>
-                  <h2 className="font-black text-xl text-slate-900 dark:text-white font-jersey">Coach's Sunday Verdict</h2>
+                  <h2 className="font-black text-xl text-slate-900 dark:text-white font-jersey">Coach&apos;s Sunday Verdict</h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">Honest debrief grounded in local telemetry</p>
                 </div>
               </div>
@@ -156,7 +145,7 @@ export default function WeekReviewPage() {
             </div>
 
             <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 p-5 rounded-2xl text-slate-800 dark:text-slate-200 text-base leading-relaxed font-medium italic">
-              "{review}"
+              &ldquo;{review}&rdquo;
             </div>
 
             <div className="border-t border-slate-200 dark:border-slate-800 pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-3">
@@ -165,7 +154,7 @@ export default function WeekReviewPage() {
                 href="/today" 
                 className="bg-purple-600 hover:bg-purple-500 text-white font-black px-5 py-2.5 rounded-xl text-xs transition-colors shadow-lg shadow-purple-600/25 font-jersey"
               >
-                Open Today's Plan &rarr;
+                Open Today&apos;s Plan &rarr;
               </Link>
             </div>
           </div>

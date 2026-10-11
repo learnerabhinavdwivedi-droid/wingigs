@@ -14,14 +14,12 @@ export function validatePlan(plan: ZodDailyPlan, envelope: Envelope): Validation
   const reasons: string[] = [];
   let totalMinutes = 0;
   let hasTooHighIntensity = false;
-  let hasInvalidDrills = false;
 
   const validDrillIds = new Set(drillsData.drills.map(d => d.id));
   const drillMap = new Map(drillsData.drills.map(d => [d.id, d]));
 
   for (const block of plan.blocks) {
     if (!validDrillIds.has(block.drill_id)) {
-      hasInvalidDrills = true;
       reasons.push(`Unknown drill_id: ${block.drill_id}`);
       continue;
     }

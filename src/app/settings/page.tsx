@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   getProfile, 
   saveProfile, 
-  exportDatabaseToJson, 
   importDatabaseFromJson, 
   resetDatabase,
   saveBackupToDevice,
@@ -109,7 +108,7 @@ export default function SettingsPage() {
       } else {
         setImportStatus('Failed to import: Invalid backup file format.');
       }
-    } catch (err) {
+    } catch {
       setImportStatus('Error reading backup file.');
     }
   };
@@ -148,7 +147,7 @@ export default function SettingsPage() {
           href="/today" 
           className="self-start sm:self-auto text-xs font-extrabold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-xl hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
         >
-          &larr; Today's Plan
+          &larr; Today&apos;s Plan
         </Link>
       </div>
 
@@ -185,7 +184,7 @@ export default function SettingsPage() {
               <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Experience Level</label>
               <select
                 value={level}
-                onChange={e => setLevel(e.target.value as any)}
+                onChange={e => setLevel(e.target.value as 'beginner' | 'intermediate' | 'advanced')}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-medium focus:border-lime-500 outline-none"
               >
                 <option value="beginner">Beginner</option>

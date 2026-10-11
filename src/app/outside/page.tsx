@@ -18,11 +18,15 @@ export default function OutsidePage() {
     start, pause, resume, handleNext
   } = useOutsideEngine(plan);
 
+  interface WakeLockSentinel {
+    release: () => Promise<void>;
+  }
+
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const [showDrillList, setShowDrillList] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
   const [audioCoachEnabled, setAudioCoachEnabled] = useState(true);
-  const wakeLockRef = useRef<any>(null);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   useEffect(() => {
     if (engineState === 'no_profile') {
@@ -35,7 +39,8 @@ export default function OutsidePage() {
     async function requestWakeLock() {
       if ('wakeLock' in navigator && state === 'running') {
         try {
-          wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+          const nav = navigator as unknown as { wakeLock: { request: (type: string) => Promise<WakeLockSentinel> } };
+          wakeLockRef.current = await nav.wakeLock.request('screen');
           setWakeLockActive(true);
         } catch (err) {
           console.warn('WakeLock could not be acquired:', err);
@@ -227,7 +232,7 @@ export default function OutsidePage() {
           </h1>
           
           <div className="bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 w-full text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed italic shadow-sm">
-            "{currentBlock?.cue}"
+            &ldquo;{currentBlock?.cue}&rdquo;
           </div>
 
           <div className="font-jersey flex items-center gap-3 mt-4 text-xs text-slate-500 dark:text-slate-400">
@@ -320,7 +325,7 @@ export default function OutsidePage() {
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 text-slate-900 dark:text-white shadow-2xl">
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
-              <h3 className="font-jersey text-xl tracking-wide">Today's Circuit Drills</h3>
+              <h3 className="font-jersey text-xl tracking-wide">Today&apos;s Circuit Drills</h3>
               <button 
                 onClick={() => setShowDrillList(false)}
                 className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white flex items-center justify-center font-bold"
