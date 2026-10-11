@@ -8,6 +8,7 @@ import { ThemeToggle } from '../components/ThemeToggle';
 import { useAuth } from '../context/AuthContext';
 import { AuthModal } from '../components/AuthModal';
 import { DownloadAppModal } from '../components/DownloadAppModal';
+import { BaharLogo } from '../components/BaharLogo';
 
 export function Navigation() {
   const pathname = usePathname();
@@ -84,9 +85,7 @@ export function Navigation() {
           {/* Logo & Brand Badge */}
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/today" className="flex items-center gap-2.5 group">
-              <span className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-400 flex items-center justify-center text-slate-950 font-black text-lg shadow-lg shadow-lime-500/20 group-hover:scale-105 transition-transform">
-                🏸
-              </span>
+              <BaharLogo size={38} className="group-hover:scale-105 transition-transform" />
               <div className="flex flex-col">
                 <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
                   Bahar<span className="text-lime-500 dark:text-lime-400">.</span>

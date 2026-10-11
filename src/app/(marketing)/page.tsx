@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BaharLogo } from '../../components/BaharLogo';
 
 export default function MarketingPage() {
   return (
@@ -7,9 +8,7 @@ export default function MarketingPage() {
       {/* Top Brand Bar */}
       <header className="w-full max-w-6xl flex items-center justify-between pb-8 border-b border-slate-200 dark:border-slate-900">
         <div className="flex items-center gap-2.5">
-          <span className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-400 flex items-center justify-center text-slate-950 text-xl font-black shadow-lg shadow-lime-500/20">
-            🏸
-          </span>
+          <BaharLogo size={42} />
           <div className="flex flex-col">
             <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-1 font-jersey">
               Bahar<span className="text-lime-500 dark:text-lime-400">.</span>

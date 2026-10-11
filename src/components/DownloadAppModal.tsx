@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { BaharLogo } from './BaharLogo';
 
 interface DownloadAppModalProps {
   isOpen: boolean;
@@ -64,9 +65,7 @@ export function DownloadAppModal({ isOpen, onClose }: DownloadAppModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-400 text-slate-950 flex items-center justify-center font-black text-xl shadow-lg shadow-lime-500/20">
-              🏸
-            </div>
+            <BaharLogo size={42} />
             <div>
               <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
                 Download & Install Bahar

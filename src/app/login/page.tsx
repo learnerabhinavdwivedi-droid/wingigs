@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { BaharLogo } from '../../components/BaharLogo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -68,9 +69,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-6">
           <Link href="/today" className="inline-flex items-center gap-2 mb-4 group">
-            <span className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-lime-400 to-emerald-400 text-slate-950 flex items-center justify-center font-black text-2xl shadow-lg shadow-lime-500/25 group-hover:scale-105 transition-transform">
-              🏸
-            </span>
+            <BaharLogo size={48} className="group-hover:scale-105 transition-transform" />
           </Link>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
             {user ? 'Athlete Profile' : mode === 'signin' ? 'Sign In to Bahar' : 'Create Athlete Account'}

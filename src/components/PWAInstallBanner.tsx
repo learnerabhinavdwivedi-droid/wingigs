@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { BaharLogo } from './BaharLogo';
 
 export function PWAInstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -69,9 +70,7 @@ export function PWAInstallBanner() {
       className="fixed bottom-20 md:bottom-6 left-4 right-4 max-w-lg md:left-auto md:right-6 z-40 bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-lime-400/30 backdrop-blur-md p-4 rounded-2xl shadow-xl dark:shadow-2xl shadow-slate-900/10 dark:shadow-black/80 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-lime-400 text-slate-950 flex items-center justify-center font-black text-xl shrink-0 shadow-md shadow-lime-400/20">
-          🏸
-        </div>
+        <BaharLogo size={40} className="shrink-0" />
         <div>
           <div className="font-jersey text-sm text-slate-900 dark:text-white tracking-wide flex items-center gap-1.5">
             <span>Install Bahar App</span>
