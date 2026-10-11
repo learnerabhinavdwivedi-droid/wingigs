@@ -66,20 +66,20 @@ export function PWAInstallBanner() {
   return (
     <aside 
       aria-label="Install Bahar application"
-      className="fixed bottom-20 md:bottom-6 left-4 right-4 max-w-lg md:left-auto md:right-6 z-40 bg-slate-900/95 border border-lime-400/30 backdrop-blur-md p-4 rounded-2xl shadow-2xl shadow-black/80 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
+      className="fixed bottom-20 md:bottom-6 left-4 right-4 max-w-lg md:left-auto md:right-6 z-40 bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-lime-400/30 backdrop-blur-md p-4 rounded-2xl shadow-xl dark:shadow-2xl shadow-slate-900/10 dark:shadow-black/80 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300"
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-lime-400 text-slate-950 flex items-center justify-center font-black text-xl shrink-0 shadow-md shadow-lime-400/20">
           🏸
         </div>
         <div>
-          <div className="text-xs font-black text-white tracking-tight flex items-center gap-1.5">
+          <div className="font-jersey text-sm text-slate-900 dark:text-white tracking-wide flex items-center gap-1.5">
             <span>Install Bahar App</span>
-            <span className="text-[10px] bg-lime-400/10 text-lime-400 font-extrabold px-1.5 py-0.2 rounded border border-lime-400/20">
+            <span className="font-jersey text-[10px] bg-lime-500/10 dark:bg-lime-400/10 text-lime-600 dark:text-lime-400 px-1.5 py-0.2 rounded border border-lime-500/20 dark:border-lime-400/20">
               Offline Court Ready
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">
+          <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-snug">
             {isIOS 
               ? 'Tap Share ⎋ then "Add to Home Screen" for instant court access.' 
               : 'Add to your device home screen for 1-tap instant launch.'}
@@ -91,14 +91,14 @@ export function PWAInstallBanner() {
         {!isIOS && deferredPrompt && (
           <button
             onClick={handleInstallClick}
-            className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs transition-all shadow-md shadow-lime-400/20 active:scale-95"
+            className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-jersey px-3.5 py-2 rounded-xl text-xs transition-all shadow-md shadow-lime-400/20 active:scale-95"
           >
             Install
           </button>
         )}
         <button
           onClick={handleDismiss}
-          className="text-slate-400 hover:text-white text-xs font-bold p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
+          className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-bold p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           aria-label="Dismiss banner"
         >
           ✕

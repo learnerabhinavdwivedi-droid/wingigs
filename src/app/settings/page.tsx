@@ -7,10 +7,12 @@ import { playAudioCue, unlockAudio } from '../../features/outside-mode/audio';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { HabitReminderSection } from '../../components/HabitReminderSection';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function SettingsPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { theme, setTheme } = useTheme();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [sport, setSport] = useState('badminton');
@@ -105,25 +107,25 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto text-slate-100 flex flex-col gap-6">
+    <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto text-slate-900 dark:text-slate-100 flex flex-col gap-6">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800/80">
         <div>
-          <span className="text-xs font-black uppercase tracking-wider text-lime-400 bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-400/20">
+          <span className="text-xs font-black uppercase tracking-wider text-lime-600 dark:text-lime-400 bg-lime-500/10 dark:bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-500/20 dark:border-lime-400/20">
             System Preferences
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-1">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white mt-1">
             Settings & Data Vault
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
             Manage your baseline training parameters, local database backups, and privacy controls.
           </p>
         </div>
 
         <Link 
           href="/today" 
-          className="self-start sm:self-auto text-xs font-extrabold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl hover:border-slate-700 transition-colors"
+          className="self-start sm:self-auto text-xs font-extrabold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-xl hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
         >
           &larr; Today's Plan
         </Link>
@@ -132,13 +134,13 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         
         {/* Left Column: Baseline Configuration */}
-        <form onSubmit={handleSaveProfile} className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-6 shadow-xl space-y-4 backdrop-blur-sm">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h2 className="text-sm font-black uppercase tracking-wider text-lime-400">
+        <form onSubmit={handleSaveProfile} className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-6 shadow-md dark:shadow-xl space-y-4 backdrop-blur-sm">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+            <h2 className="text-sm font-black uppercase tracking-wider text-lime-600 dark:text-lime-400">
               Training Baseline
             </h2>
             {savedSuccess && (
-              <span className="text-xs font-bold text-lime-400 animate-pulse">
+              <span className="text-xs font-bold text-lime-600 dark:text-lime-400 animate-pulse">
                 ✓ Saved!
               </span>
             )}
@@ -146,11 +148,11 @@ export default function SettingsPage() {
 
           <div className="space-y-3 text-xs">
             <div>
-              <label className="block text-slate-400 font-bold mb-1">Sport Discipline</label>
+              <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Sport Discipline</label>
               <select
                 value={sport}
                 onChange={e => setSport(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-medium focus:border-lime-400 outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-medium focus:border-lime-500 outline-none"
               >
                 <option value="badminton">🏸 Badminton</option>
                 <option value="running">🏃 Running</option>
@@ -159,11 +161,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-slate-400 font-bold mb-1">Experience Level</label>
+              <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Experience Level</label>
               <select
                 value={level}
                 onChange={e => setLevel(e.target.value as any)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-medium focus:border-lime-400 outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-medium focus:border-lime-500 outline-none"
               >
                 <option value="beginner">Beginner</option>
                 <option value="intermediate">Intermediate</option>
@@ -172,11 +174,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-slate-400 font-bold mb-1">Session Target Duration</label>
+              <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Session Target Duration</label>
               <select
                 value={minutes}
                 onChange={e => setMinutes(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-medium focus:border-lime-400 outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-medium focus:border-lime-500 outline-none"
               >
                 <option value={15}>15 Minutes</option>
                 <option value={30}>30 Minutes</option>
@@ -186,13 +188,13 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-slate-400 font-bold mb-1">City Location (Weather & AQI)</label>
+              <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">City Location (Weather & AQI)</label>
               <input
                 type="text"
                 value={city}
                 onChange={e => setCity(e.target.value)}
                 placeholder="e.g. Seattle"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-medium focus:border-lime-400 outline-none"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-white font-medium focus:border-lime-500 outline-none"
               />
             </div>
           </div>
@@ -205,8 +207,61 @@ export default function SettingsPage() {
           </button>
         </form>
 
-        {/* Right Column: Habit Anchor, Audio Coach & Data Vault */}
+        {/* Right Column: Theme Selector, Habit Anchor, Audio Coach & Data Vault */}
         <div className="space-y-6">
+          
+          {/* Appearance & Color Theme */}
+          <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-6 shadow-md dark:shadow-xl space-y-3 backdrop-blur-sm">
+            <div className="flex justify-between items-center">
+              <h3 className="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-300">
+                Appearance & Theme
+              </h3>
+              <span className="text-[11px] font-bold text-lime-600 dark:text-lime-400 capitalize bg-lime-500/10 px-2.5 py-0.5 rounded-full border border-lime-500/20">
+                {theme} Mode
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Switch between Athletic Obsidian dark mode and Athletic Platinum light mode.
+            </p>
+            <div className="grid grid-cols-3 gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  theme === 'dark'
+                    ? 'bg-slate-900 border-lime-400 text-white shadow-md ring-1 ring-lime-400'
+                    : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>🌙</span>
+                <span>Dark</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  theme === 'light'
+                    ? 'bg-lime-400 border-lime-500 text-slate-950 font-black shadow-md ring-1 ring-lime-500'
+                    : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                <span>☀️</span>
+                <span>Light</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('system')}
+                className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  theme === 'system'
+                    ? 'bg-sky-500 border-sky-600 text-white font-black shadow-md ring-1 ring-sky-400'
+                    : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                <span>💻</span>
+                <span>System</span>
+              </button>
+            </div>
+          </div>
           
           <HabitReminderSection />
 

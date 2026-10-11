@@ -304,22 +304,22 @@ export function OnboardingForm() {
     <div className="w-full flex flex-col gap-6">
       
       {/* Top Header Section - Unified with /today and /progress */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200/90 dark:border-slate-800/80">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-black uppercase tracking-wider text-lime-400 bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-400/20">
+            <span className="text-xs font-black uppercase tracking-wider text-lime-700 dark:text-lime-400 bg-lime-500/15 dark:bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-500/30 dark:border-lime-400/20">
               Profile Setup
             </span>
-            <span className="text-xs font-semibold text-slate-400">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
               Personalized Training Envelope
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-0.5">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white mt-0.5 font-jersey">
             Welcome to Bahar
           </h1>
         </div>
 
-        <p className="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-md leading-relaxed">
           Configure your athletic baseline and parameters. Bahar dynamically calibrates your volume and intensity envelope each day to protect streak momentum.
         </p>
       </div>
@@ -331,13 +331,13 @@ export function OnboardingForm() {
           <div className="lg:col-span-7 flex flex-col gap-6">
             
             {/* 1. 1-Tap Athletic Archetypes (Quick Setup) */}
-            <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-xl backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-black uppercase tracking-wider text-lime-400 flex items-center gap-1.5">
+                <span className="text-xs font-black uppercase tracking-wider text-lime-700 dark:text-lime-400 flex items-center gap-1.5 font-jersey">
                   <Sparkles className="w-3.5 h-3.5" />
                   1-Tap Athletic Archetypes
                 </span>
-                <span className="text-[11px] font-bold text-slate-400">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                   Instant Setup
                 </span>
               </div>
@@ -361,23 +361,23 @@ export function OnboardingForm() {
                       }}
                       className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-between group ${
                         isSelected
-                          ? 'bg-lime-400/10 border-lime-400 text-white ring-1 ring-lime-400 shadow-lg shadow-lime-500/10'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800/40'
+                          ? 'bg-lime-500/15 dark:bg-lime-400/10 border-lime-500 dark:border-lime-400 text-slate-900 dark:text-white ring-1 ring-lime-500 dark:ring-lime-400 shadow-md'
+                          : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/40'
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xl">{arch.icon}</span>
                           <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                            isSelected ? 'bg-lime-400 text-slate-950' : 'bg-slate-800 text-slate-400'
+                            isSelected ? 'bg-lime-400 text-slate-950 font-bold' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                           }`}>
                             {arch.minutes}m • {arch.sessions}x
                           </span>
                         </div>
-                        <div className="font-black text-sm tracking-tight text-white mb-1">
+                        <div className="font-black text-sm tracking-tight text-slate-900 dark:text-white mb-1 font-jersey">
                           {arch.name}
                         </div>
-                        <p className="text-[11px] text-slate-400 leading-snug">
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
                           {arch.tagline}
                         </p>
                       </div>
@@ -388,13 +388,13 @@ export function OnboardingForm() {
             </div>
 
             {/* 2. Primary Sport Selection */}
-            <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-xl backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
-                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Flame className="w-3.5 h-3.5 text-lime-400" />
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5 font-jersey">
+                  <Flame className="w-3.5 h-3.5 text-lime-500 dark:text-lime-400" />
                   Primary Sport Focus
                 </label>
-                <span className="text-[11px] font-semibold text-slate-400">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                   Select discipline
                 </span>
               </div>
@@ -410,26 +410,26 @@ export function OnboardingForm() {
                       onClick={() => setProfile({ ...profile, sport: sport.id })}
                       className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-between group ${
                         isSelected
-                          ? 'bg-lime-400/10 border-lime-400 text-white ring-1 ring-lime-400 shadow-lg shadow-lime-500/10'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800/40'
+                          ? 'bg-lime-500/15 dark:bg-lime-400/10 border-lime-500 dark:border-lime-400 text-slate-900 dark:text-white ring-1 ring-lime-500 dark:ring-lime-400 shadow-md'
+                          : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/40'
                       }`}
                     >
                       <div className="flex items-center justify-between w-full mb-3">
                         <div className={`p-2.5 rounded-xl transition-colors ${
-                          isSelected ? 'bg-lime-400 text-slate-950' : 'bg-slate-800 text-slate-300 group-hover:text-white'
+                          isSelected ? 'bg-lime-400 text-slate-950' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'
                         }`}>
                           <Icon className="w-4 h-4" />
                         </div>
                         <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                          isSelected ? 'bg-lime-400/20 text-lime-400' : 'bg-slate-800 text-slate-400'
+                          isSelected ? 'bg-lime-400/20 text-lime-700 dark:text-lime-400' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                         }`}>
                           {sport.badge}
                         </span>
                       </div>
 
                       <div>
-                        <div className="font-extrabold text-sm tracking-tight text-white">{sport.title}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">{sport.subtitle}</div>
+                        <div className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white font-jersey">{sport.title}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{sport.subtitle}</div>
                       </div>
                     </button>
                   );
@@ -450,13 +450,13 @@ export function OnboardingForm() {
             </div>
 
             {/* 3. Training Location (Weather & AQI Sync) */}
-            <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-xl backdrop-blur-sm">
               <div className="flex items-center justify-between mb-2.5">
-                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-lime-400" />
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5 font-jersey">
+                  <MapPin className="w-3.5 h-3.5 text-lime-500 dark:text-lime-400" />
                   Training Location
                 </label>
-                <span className="text-[11px] font-semibold text-slate-400">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                   Environmental Envelope Sync
                 </span>
               </div>
@@ -471,20 +471,20 @@ export function OnboardingForm() {
                   onChange={e => setProfile({ ...profile, city: e.target.value })}
                   placeholder="Enter your home city..."
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-800 bg-slate-950 text-white placeholder-slate-500 text-sm font-semibold focus:border-lime-400 focus:ring-1 focus:ring-lime-400 outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm font-semibold focus:border-lime-500 dark:focus:border-lime-400 focus:ring-1 focus:ring-lime-400 outline-none transition-all"
                 />
               </div>
 
               {weatherPreview && (
-                <div className="mt-3 p-3 rounded-2xl border border-slate-800 bg-slate-950/70 text-xs flex items-center justify-between">
+                <div className="mt-3 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70 text-xs flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white">{weatherPreview.condition}</span>
-                    <span className="text-slate-500">•</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{weatherPreview.condition}</span>
+                    <span className="text-slate-400 dark:text-slate-500">•</span>
                     <span>{weatherPreview.temp}</span>
-                    <span className="text-slate-500">•</span>
-                    <span className="text-lime-400 font-semibold">AQI: {weatherPreview.aqi}</span>
+                    <span className="text-slate-400 dark:text-slate-500">•</span>
+                    <span className="text-lime-700 dark:text-lime-400 font-semibold">AQI: {weatherPreview.aqi}</span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">
                     {weatherPreview.note}
                   </span>
                 </div>
@@ -497,13 +497,13 @@ export function OnboardingForm() {
           <div className="lg:col-span-5 flex flex-col gap-6">
             
             {/* 4. Experience Level */}
-            <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-xl backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
-                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Gauge className="w-3.5 h-3.5 text-lime-400" />
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5 font-jersey">
+                  <Gauge className="w-3.5 h-3.5 text-lime-500 dark:text-lime-400" />
                   Experience Level
                 </label>
-                <span className="text-[11px] font-semibold text-slate-400">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                   Controls intensity cap
                 </span>
               </div>
@@ -518,25 +518,25 @@ export function OnboardingForm() {
                       onClick={() => setProfile({ ...profile, level: lvl.id })}
                       className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-lime-400/10 border-lime-400 text-white ring-1 ring-lime-400 shadow-md shadow-lime-500/10'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800/40'
+                          ? 'bg-lime-500/15 dark:bg-lime-400/10 border-lime-500 dark:border-lime-400 text-slate-900 dark:text-white ring-1 ring-lime-500 dark:ring-lime-400 shadow-md'
+                          : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/40'
                       }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-extrabold text-sm tracking-tight text-white">{lvl.title}</span>
+                          <span className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white font-jersey">{lvl.title}</span>
                           <div className="flex gap-1">
                             {[1, 2, 3].map(barIndex => (
                               <span
                                 key={barIndex}
                                 className={`w-1.5 h-3.5 rounded-full ${
-                                  barIndex <= lvl.bars ? (isSelected ? 'bg-lime-400' : 'bg-slate-600') : 'bg-slate-800'
+                                  barIndex <= lvl.bars ? (isSelected ? 'bg-lime-500 dark:bg-lime-400' : 'bg-slate-400 dark:bg-slate-600') : 'bg-slate-200 dark:bg-slate-800'
                                 }`}
                               />
                             ))}
                           </div>
                         </div>
-                        <p className="text-[11px] leading-tight text-slate-400">
+                        <p className="text-[11px] leading-tight text-slate-500 dark:text-slate-400">
                           {lvl.subtext}
                         </p>
                       </div>
@@ -558,17 +558,17 @@ export function OnboardingForm() {
             </div>
 
             {/* 5. Session Budget Duration */}
-            <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-xl backdrop-blur-sm">
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-lime-400" />
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5 font-jersey">
+                  <Clock className="w-3.5 h-3.5 text-lime-500 dark:text-lime-400" />
                   Session Budget (Duration)
                 </label>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-black text-lime-400 tracking-tight font-mono">
+                  <span className="text-2xl font-black text-lime-700 dark:text-lime-400 tracking-tight font-jersey">
                     {profile.maxMinutesPerSession}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                     Mins
                   </span>
                 </div>
@@ -583,7 +583,7 @@ export function OnboardingForm() {
                   step="15"
                   value={profile.maxMinutesPerSession}
                   onChange={e => setProfile({ ...profile, maxMinutesPerSession: Number(e.target.value) })}
-                  className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-lime-400 bg-slate-950 border border-slate-800"
+                  className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-lime-500 dark:accent-lime-400 bg-slate-200 dark:bg-slate-950 border border-slate-300 dark:border-slate-800"
                 />
               </div>
 
@@ -596,10 +596,10 @@ export function OnboardingForm() {
                       type="button"
                       key={mins}
                       onClick={() => setProfile({ ...profile, maxMinutesPerSession: mins })}
-                      className={`py-2 rounded-xl border text-xs font-bold transition-all ${
+                      className={`py-2 rounded-xl border text-xs font-bold transition-all font-jersey ${
                         isSelected
                           ? 'bg-lime-400 text-slate-950 border-lime-400 shadow-md font-black'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                          : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700'
                       }`}
                     >
                       {mins}m
@@ -610,40 +610,40 @@ export function OnboardingForm() {
             </div>
 
             {/* 6. Live Real-Time Physical Envelope Forecast */}
-            <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 shadow-xl backdrop-blur-sm">
+            <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 shadow-md dark:shadow-xl backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black uppercase tracking-wider text-lime-400 flex items-center gap-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-lime-700 dark:text-lime-400 flex items-center gap-1.5 font-jersey">
                   <Activity className="w-3.5 h-3.5" />
                   Live Physical Forecast
                 </span>
-                <span className="text-[10px] font-bold text-slate-400">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
                   {profile.maxSessionsPerWeek}x / week commitment
                 </span>
               </div>
 
               <div className="grid grid-cols-3 gap-2.5 text-center">
-                <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80">
-                  <div className="text-lg font-black text-white font-mono">{Math.max(2, Math.round(profile.maxMinutesPerSession / 10))}</div>
-                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Circuit Load</div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80">
+                  <div className="text-lg font-black text-slate-900 dark:text-white font-jersey">{Math.max(2, Math.round(profile.maxMinutesPerSession / 10))}</div>
+                  <div className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-0.5">Circuit Load</div>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80">
-                  <div className="text-lg font-black text-lime-400 font-mono">~{Math.round(profile.maxMinutesPerSession * 6.5)}</div>
-                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Est. Burn</div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80">
+                  <div className="text-lg font-black text-lime-700 dark:text-lime-400 font-jersey">~{Math.round(profile.maxMinutesPerSession * 6.5)}</div>
+                  <div className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-0.5">Est. Burn</div>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80">
-                  <div className="text-lg font-black text-sky-400 font-mono">{profile.level === 'advanced' ? '36h' : '24h'}</div>
-                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Recovery Shield</div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80">
+                  <div className="text-lg font-black text-sky-700 dark:text-sky-400 font-jersey">{profile.level === 'advanced' ? '36h' : '24h'}</div>
+                  <div className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-0.5">Recovery Shield</div>
                 </div>
               </div>
             </div>
 
             {/* 7. Action CTAs & Privacy Badge */}
-            <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-xl backdrop-blur-sm flex flex-col gap-3">
+            <div className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-xl backdrop-blur-sm flex flex-col gap-3">
               <button
                 type="button"
                 onClick={handleStartTraining}
                 disabled={loading}
-                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black text-base shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black text-base shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 group disabled:opacity-50 font-jersey"
               >
                 <span>{loading ? 'Starting...' : 'Start Training'}</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -652,15 +652,15 @@ export function OnboardingForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-6 rounded-2xl border border-slate-800 bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 hover:text-white text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 font-jersey"
               >
-                <Sparkles className="w-3.5 h-3.5 text-lime-400" />
+                <Sparkles className="w-3.5 h-3.5 text-lime-500 dark:text-lime-400" />
                 <span>{loading ? 'Analyzing...' : 'Take 5-Min Baseline Test First'}</span>
               </button>
 
-              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-lime-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-lime-500 dark:text-lime-400" />
                   100% Offline Local IndexedDB
                 </span>
                 <span>Zero cloud telemetry</span>
@@ -672,38 +672,38 @@ export function OnboardingForm() {
         </form>
       ) : (
         /* STEP 2: Baseline Benchmark Drill Screen */
-        <div className="max-w-2xl mx-auto w-full bg-slate-900/70 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-xl backdrop-blur-sm flex flex-col gap-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="max-w-2xl mx-auto w-full bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-md dark:shadow-xl backdrop-blur-sm flex flex-col gap-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
             <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-lime-400 bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-400/20">
+              <span className="text-[10px] font-black uppercase tracking-widest text-lime-700 dark:text-lime-400 bg-lime-500/15 dark:bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-500/30 dark:border-lime-400/20">
                 Step 2 of 2 • Benchmark
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1 font-jersey">
                 Baseline Physical Drill
               </h2>
             </div>
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="text-xs text-slate-400 hover:text-white font-semibold px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700"
+              className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-jersey"
             >
               &larr; Back
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl border border-slate-800 bg-slate-950/80">
-            <div className="flex items-center gap-2 text-xs font-extrabold text-lime-400 uppercase tracking-wider mb-2">
+          <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80">
+            <div className="flex items-center gap-2 text-xs font-extrabold text-lime-700 dark:text-lime-400 uppercase tracking-wider mb-2 font-jersey">
               <ShieldCheck className="w-4 h-4" />
               AI Coach Benchmark Assignment
             </div>
-            <p className="text-sm font-semibold italic leading-relaxed text-slate-200">
+            <p className="text-sm font-semibold italic leading-relaxed text-slate-700 dark:text-slate-200">
               "{baselineTask}"
             </p>
           </div>
 
           <form onSubmit={handleBaselineSubmit} className="flex flex-col gap-5">
             <div>
-              <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2 font-jersey">
                 Your Recorded Result
               </label>
               <input
@@ -712,9 +712,9 @@ export function OnboardingForm() {
                 onChange={e => setBaselineResult(e.target.value)}
                 placeholder="e.g. 26 reps in 60s, smooth court recovery"
                 required
-                className="w-full px-4 py-3.5 rounded-2xl border border-slate-800 bg-slate-950 text-white placeholder-slate-500 text-sm font-semibold focus:border-lime-400 focus:ring-1 focus:ring-lime-400 outline-none"
+                className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm font-semibold focus:border-lime-500 dark:focus:border-lime-400 focus:ring-1 focus:ring-lime-400 outline-none"
               />
-              <p className="text-[11px] text-slate-400 mt-1.5">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
                 This anchors your dynamic intensity floor so workouts are never too harsh or too easy.
               </p>
             </div>
@@ -722,7 +722,7 @@ export function OnboardingForm() {
             <div className="pt-2 flex flex-col gap-2.5">
               <button
                 type="submit"
-                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black text-base shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 group"
+                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black text-base shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 group font-jersey"
               >
                 <span>Lock Baseline & Start Training</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -730,7 +730,7 @@ export function OnboardingForm() {
               <button
                 type="button"
                 onClick={handleStartTraining}
-                className="text-xs text-center text-slate-400 hover:text-white font-semibold py-2"
+                className="text-xs text-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold py-2 font-jersey"
               >
                 Skip benchmark for now &rarr;
               </button>

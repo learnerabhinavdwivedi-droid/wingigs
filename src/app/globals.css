@@ -1,7 +1,25 @@
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 @source "../**/*.{js,ts,jsx,tsx}";
 
+@font-face {
+  font-family: 'JerseyM54';
+  src: url('/fonts/JerseyM54.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --background: #f8fafc;
+  --foreground: #090d16;
+  --color-primary: #4d7c0f;
+  --color-primary-hover: #3f6212;
+  --color-card: #ffffff;
+  --color-card-border: #e2e8f0;
+}
+
+html.dark, :root.dark {
   --background: #090d16;
   --foreground: #f8fafc;
   --color-primary: #84cc16;
@@ -13,22 +31,40 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-jersey), 'JerseyM54', var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-jersey: var(--font-jersey), 'JerseyM54', sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 }
 
 html {
-  color-scheme: dark;
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-jersey), 'JerseyM54', var(--font-geist-sans), sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4, h5, h6, .font-jersey {
+  font-family: var(--font-jersey), 'JerseyM54', sans-serif;
+  letter-spacing: 0.025em;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
 }
 
 /* Custom sleek scrollbar */
@@ -37,17 +73,30 @@ body {
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
+html.dark ::-webkit-scrollbar-track {
   background: #090d16;
 }
 
-::-webkit-scrollbar-thumb {
+html.dark ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 9999px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+html.dark ::-webkit-scrollbar-thumb:hover {
   background: #334155;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Safe area padding utilities for mobile phones */

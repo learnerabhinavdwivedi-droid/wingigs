@@ -6,6 +6,7 @@ import { UserProfile } from '../data/local/db';
 import { playAudioCue, unlockAudio } from '../features/outside-mode/audio';
 import { useRouter } from 'next/navigation';
 import { HabitReminderSection } from './HabitReminderSection';
+import { useTheme } from '../context/ThemeContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface SettingsModalProps {
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { theme, setTheme } = useTheme();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [sport, setSport] = useState('badminton');
@@ -120,23 +122,23 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
       <div 
-        className="bg-slate-900 border border-slate-800 text-slate-100 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative my-8 max-h-[90vh] flex flex-col"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl relative my-8 max-h-[90vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800 shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-lime-400/10 border border-lime-400/20 text-lime-400 flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 rounded-xl bg-lime-500/15 dark:bg-lime-400/10 border border-lime-500/30 dark:border-lime-400/20 text-lime-600 dark:text-lime-400 flex items-center justify-center text-sm font-bold">
               ⚙️
             </div>
             <div>
-              <h2 className="text-lg font-black tracking-tight text-white">Settings & Data Vault</h2>
-              <p className="text-[11px] text-slate-400">100% Local-first Dexie storage</p>
+              <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Settings & Data Vault</h2>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">100% Local-first Dexie storage</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-base font-bold transition-colors"
+            className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center text-base font-bold transition-colors"
             aria-label="Close settings"
           >
             ✕
@@ -145,14 +147,67 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
         {/* Scrollable Content */}
         <div className="overflow-y-auto py-4 space-y-6 flex-1 pr-1">
+          {/* Appearance & Color Theme */}
+          <div className="bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-300">
+                Appearance & Theme
+              </span>
+              <span className="text-[11px] font-bold text-lime-600 dark:text-lime-400 capitalize bg-lime-500/10 px-2 py-0.5 rounded-full border border-lime-500/20">
+                {theme} Mode
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+              Switch between high-contrast Athletic Obsidian dark mode and Athletic Platinum light mode.
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  theme === 'dark'
+                    ? 'bg-slate-900 border-lime-400 text-white shadow-md ring-1 ring-lime-400'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>🌙</span>
+                <span>Dark</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  theme === 'light'
+                    ? 'bg-lime-400 border-lime-500 text-slate-950 font-black shadow-md ring-1 ring-lime-500'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                <span>☀️</span>
+                <span>Light</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme('system')}
+                className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  theme === 'system'
+                    ? 'bg-sky-500 text-white border-sky-600 font-black shadow-md ring-1 ring-sky-400'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                <span>💻</span>
+                <span>System</span>
+              </button>
+            </div>
+          </div>
+
           {/* Profile Quick Edit */}
-          <form onSubmit={handleSaveProfile} className="space-y-4 bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4">
+          <form onSubmit={handleSaveProfile} className="space-y-4 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-lime-400">
+              <span className="text-xs font-black uppercase tracking-wider text-lime-600 dark:text-lime-400">
                 Training Baseline
               </span>
               {savedSuccess && (
-                <span className="text-[11px] font-bold text-lime-400 animate-pulse">
+                <span className="text-[11px] font-bold text-lime-600 dark:text-lime-400 animate-pulse">
                   ✓ Profile Saved!
                 </span>
               )}
@@ -160,11 +215,11 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Sport</label>
+                <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Sport</label>
                 <select
                   value={sport}
                   onChange={e => setSport(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-lime-400 outline-none"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-medium focus:border-lime-400 outline-none"
                 >
                   <option value="badminton">🏸 Badminton</option>
                   <option value="running">🏃 Running</option>
@@ -173,11 +228,11 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </div>
 
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Level</label>
+                <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Level</label>
                 <select
                   value={level}
                   onChange={e => setLevel(e.target.value as any)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-lime-400 outline-none"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-medium focus:border-lime-400 outline-none"
                 >
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
@@ -186,11 +241,11 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </div>
 
               <div>
-                <label className="block text-slate-400 font-bold mb-1">Session Duration</label>
+                <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">Session Duration</label>
                 <select
                   value={minutes}
                   onChange={e => setMinutes(Number(e.target.value))}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-lime-400 outline-none"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-medium focus:border-lime-400 outline-none"
                 >
                   <option value={15}>15 Minutes</option>
                   <option value={30}>30 Minutes</option>
@@ -200,12 +255,12 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </div>
 
               <div>
-                <label className="block text-slate-400 font-bold mb-1">City (Weather/AQI)</label>
+                <label className="block text-slate-600 dark:text-slate-400 font-bold mb-1">City (Weather/AQI)</label>
                 <input
                   type="text"
                   value={city}
                   onChange={e => setCity(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-lime-400 outline-none"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-medium focus:border-lime-400 outline-none"
                   placeholder="e.g. Seattle"
                 />
               </div>
@@ -213,7 +268,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
             <button
               type="submit"
-              className="w-full bg-slate-800 hover:bg-slate-700 text-lime-400 font-bold py-2 rounded-xl text-xs transition-colors border border-slate-700/60"
+              className="w-full bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-lime-400 font-bold py-2.5 rounded-xl text-xs transition-colors border border-slate-700/60 shadow-sm"
             >
               Update Baseline Settings
             </button>
@@ -223,33 +278,33 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           <HabitReminderSection />
 
           {/* Audio Coach Voice Test */}
-          <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4">
+          <div className="bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-300">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-300">
                 Court Audio Coach
               </span>
-              <span className="text-[11px] text-slate-400">Browser Speech API</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400">Browser Speech API</span>
             </div>
-            <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
               Pocket cues call drill changes hands-free without looking at your screen. Test your speech synthesis below.
             </p>
             <button
               type="button"
               onClick={handleTestAudio}
               disabled={audioTesting}
-              className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2"
             >
               <span>{audioTesting ? '🔊 Playing Voice Cue...' : '🎙️ Test Speech Voice Cue'}</span>
             </button>
           </div>
 
           {/* Data Export & Import */}
-          <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 space-y-3">
+          <div className="bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 space-y-3">
             <div>
-              <span className="text-xs font-black uppercase tracking-wider text-slate-300 block mb-1">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-300 block mb-1">
                 Data Backup & Portability
               </span>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Your workout logs, streaks, and custom baseline never leave your browser unless you export them.
               </p>
             </div>
@@ -259,7 +314,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 type="button"
                 onClick={handleExportData}
                 disabled={exporting}
-                className="bg-lime-500/10 hover:bg-lime-500/20 border border-lime-400/30 text-lime-400 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="bg-lime-500/15 dark:bg-lime-500/10 hover:bg-lime-500/25 dark:hover:bg-lime-500/20 border border-lime-500/30 dark:border-lime-400/30 text-lime-700 dark:text-lime-400 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
               >
                 <span>📥</span>
                 <span>{exporting ? 'Exporting...' : 'Export JSON'}</span>
@@ -268,7 +323,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold py-2.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
               >
                 <span>📤</span>
                 <span>Import Backup</span>
@@ -283,18 +338,18 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
 
             {importStatus && (
-              <div className="text-[11px] font-semibold text-sky-400 bg-sky-950/40 border border-sky-800/60 p-2.5 rounded-xl">
+              <div className="text-[11px] font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 p-2.5 rounded-xl">
                 {importStatus}
               </div>
             )}
           </div>
 
           {/* Danger Zone: Reset Database */}
-          <div className="bg-rose-950/20 border border-rose-900/40 rounded-2xl p-4">
-            <span className="text-xs font-black uppercase tracking-wider text-rose-400 block mb-1">
+          <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 rounded-2xl p-4">
+            <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400 block mb-1">
               Danger Zone
             </span>
-            <p className="text-xs text-slate-400 mb-3">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
               Erase all local profile settings, check-in history, and generated training plans.
             </p>
 
@@ -302,7 +357,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <button
                 type="button"
                 onClick={() => setConfirmReset(true)}
-                className="w-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 font-bold py-2 rounded-xl text-xs transition-colors"
+                className="w-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 font-bold py-2 rounded-xl text-xs transition-colors"
               >
                 Delete All Data & Start Fresh
               </button>
@@ -311,7 +366,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <button
                   type="button"
                   onClick={() => setConfirmReset(false)}
-                  className="flex-1 bg-slate-800 text-slate-300 font-bold py-2 rounded-xl text-xs"
+                  className="flex-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-2 rounded-xl text-xs"
                 >
                   Cancel
                 </button>
@@ -328,11 +383,11 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         </div>
 
         {/* Modal Footer */}
-        <div className="pt-3 border-t border-slate-800 shrink-0 flex items-center justify-between text-[11px] text-slate-500">
+        <div className="pt-3 border-t border-slate-200 dark:border-slate-800 shrink-0 flex items-center justify-between text-[11px] text-slate-500">
           <span>Bahar v0.1.0 (PWA)</span>
           <button
             onClick={onClose}
-            className="text-xs font-bold text-slate-300 hover:text-white"
+            className="text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white"
           >
             Done
           </button>

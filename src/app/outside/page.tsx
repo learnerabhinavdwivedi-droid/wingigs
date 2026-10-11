@@ -72,9 +72,9 @@ export default function OutsidePage() {
 
   if (!plan) {
     return (
-      <main className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-8">
-        <div className="w-12 h-12 border-4 border-lime-400 border-t-transparent rounded-full animate-spin mb-4 shadow-lg shadow-lime-500/20" />
-        <div className="text-slate-400 font-extrabold text-sm tracking-tight">Initializing court session...</div>
+      <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col items-center justify-center p-8">
+        <div className="w-12 h-12 border-4 border-lime-500 dark:border-lime-400 border-t-transparent rounded-full animate-spin mb-4 shadow-lg shadow-lime-500/20" />
+        <div className="font-jersey text-slate-600 dark:text-slate-400 text-sm tracking-wide">Initializing court session...</div>
       </main>
     );
   }
@@ -92,42 +92,42 @@ export default function OutsidePage() {
     };
 
     return (
-      <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-emerald-950 flex flex-col items-center justify-center text-white p-6 sm:p-10 text-center relative overflow-hidden">
+      <main className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950 flex flex-col items-center justify-center text-slate-900 dark:text-white p-6 sm:p-10 text-center relative overflow-hidden">
         <ConfettiCelebration />
 
-        <div className="w-24 h-24 bg-lime-400/15 text-lime-400 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-2xl shadow-lime-500/30 border border-lime-400/30 animate-bounce relative z-10">
+        <div className="w-24 h-24 bg-lime-500/15 dark:bg-lime-400/15 text-lime-600 dark:text-lime-400 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-2xl shadow-lime-500/30 border border-lime-500/30 dark:border-lime-400/30 animate-bounce relative z-10">
           🏆
         </div>
         
-        <span className="text-xs font-black uppercase tracking-widest text-lime-400 mb-2 relative z-10">
+        <span className="font-jersey text-xs tracking-wider uppercase text-lime-600 dark:text-lime-400 mb-2 relative z-10">
           Session Complete
         </span>
-        <h1 className="text-4xl sm:text-6xl font-black mb-3 tracking-tight text-white relative z-10">
+        <h1 className="font-jersey text-4xl sm:text-6xl mb-3 tracking-wide text-slate-900 dark:text-white relative z-10">
           Done!
         </h1>
-        <p className="text-sm sm:text-base text-slate-300 mb-8 max-w-md leading-relaxed relative z-10">
-          Completed <strong className="text-lime-400 font-black">{totalMinutes} active minutes</strong> across {plan.blocks.length} structured court drills.
+        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mb-8 max-w-md leading-relaxed relative z-10 font-medium">
+          Completed <strong className="text-lime-600 dark:text-lime-400 font-bold">{totalMinutes} active minutes</strong> across {plan.blocks.length} structured court drills.
         </p>
 
-        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 w-full max-w-md mb-6 grid grid-cols-3 divide-x divide-slate-800 text-center shadow-xl relative z-10">
+        <div className="bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 w-full max-w-md mb-6 grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-800 text-center shadow-lg dark:shadow-xl relative z-10">
           <div className="px-2">
-            <div className="text-2xl sm:text-3xl font-black text-white">{plan.blocks.length}</div>
-            <div className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Drills</div>
+            <div className="font-jersey text-2xl sm:text-3xl text-slate-900 dark:text-white">{plan.blocks.length}</div>
+            <div className="font-jersey text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 tracking-wider mt-1">Drills</div>
           </div>
           <div className="px-2">
-            <div className="text-2xl sm:text-3xl font-black text-lime-400">+{totalMinutes}m</div>
-            <div className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Court Time</div>
+            <div className="font-jersey text-2xl sm:text-3xl text-lime-600 dark:text-lime-400">+{totalMinutes}m</div>
+            <div className="font-jersey text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 tracking-wider mt-1">Court Time</div>
           </div>
           <div className="px-2">
-            <div className="text-2xl sm:text-3xl font-black text-sky-400">🔥 +1</div>
-            <div className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Momentum</div>
+            <div className="font-jersey text-2xl sm:text-3xl text-sky-600 dark:text-sky-400">🔥 +1</div>
+            <div className="font-jersey text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 tracking-wider mt-1">Momentum</div>
           </div>
         </div>
 
         <div className="w-full max-w-md flex flex-col gap-3 relative z-10">
           <button 
             onClick={finishWorkout} 
-            className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-black px-8 py-4 rounded-2xl text-lg sm:text-xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
+            className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 font-jersey text-xl sm:text-2xl px-8 py-4 rounded-2xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
           >
             Save & Return &rarr;
           </button>
@@ -135,7 +135,7 @@ export default function OutsidePage() {
           <button
             type="button"
             onClick={handleShareWorkout}
-            className="w-full bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 font-bold py-3 px-6 rounded-2xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2"
+            className="w-full bg-white dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-jersey py-3 px-6 rounded-2xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm"
           >
             <span>{copiedShare ? '✅ Copied to Clipboard!' : '📤 Share Workout Accomplishment'}</span>
           </button>
@@ -148,39 +148,39 @@ export default function OutsidePage() {
   const currentDrillName = currentBlock ? (drillMap.get(currentBlock.drill_id) || currentBlock.drill_id) : '';
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white flex flex-col justify-between p-4 sm:p-6 lg:p-10 selection:bg-lime-400 selection:text-slate-950">
+    <main className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col justify-between p-4 sm:p-6 lg:p-10 selection:bg-lime-400 selection:text-slate-950">
       
       {/* Top Header / Mode Indicators */}
       <div className="w-full max-w-4xl mx-auto flex items-center justify-between pt-2">
         <Link 
           href="/today" 
-          className="text-xs text-slate-400 hover:text-white font-bold flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-slate-900/80 border border-slate-800 transition-colors"
+          className="font-jersey text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 transition-colors shadow-sm"
         >
           &larr; Exit Session
         </Link>
         
         <div className="flex items-center gap-2">
           {wakeLockActive && (
-            <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-sky-400 hidden sm:inline">
+            <span className="font-jersey text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sky-600 dark:text-sky-400 hidden sm:inline shadow-sm">
               ☀️ Screen Awake
             </span>
           )}
           <button
             type="button"
             onClick={() => setAudioCoachEnabled(!audioCoachEnabled)}
-            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full transition-all border ${
+            className={`flex items-center gap-1.5 font-jersey text-xs px-3 py-1.5 rounded-full transition-all border shadow-sm ${
               audioCoachEnabled
-                ? 'bg-lime-400/10 border-lime-400/20 text-lime-400'
-                : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-400'
+                ? 'bg-lime-500/10 dark:bg-lime-400/10 border-lime-500/30 dark:border-lime-400/20 text-lime-600 dark:text-lime-400'
+                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             }`}
             title="Toggle Audio Cues & Whistle"
           >
-            <span className={`w-2 h-2 rounded-full ${audioCoachEnabled ? 'bg-lime-400 animate-pulse' : 'bg-slate-600'}`} />
+            <span className={`w-2 h-2 rounded-full ${audioCoachEnabled ? 'bg-lime-500 dark:bg-lime-400 animate-pulse' : 'bg-slate-400 dark:bg-slate-600'}`} />
             <span>{audioCoachEnabled ? 'Audio Coach On' : 'Audio Muted'}</span>
           </button>
           <button
             onClick={() => setShowDrillList(!showDrillList)}
-            className="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors"
+            className="font-jersey text-xs px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm"
           >
             📋 Circuit ({plan.blocks.length})
           </button>
@@ -194,7 +194,7 @@ export default function OutsidePage() {
         <div className="w-full max-w-md text-center lg:text-left flex flex-col items-center lg:items-start">
           
           {/* Circuit Stepper Track */}
-          <div className="flex items-center gap-2 mb-3 bg-slate-900/80 border border-slate-800/80 px-3.5 py-1.5 rounded-full">
+          <div className="flex items-center gap-2 mb-3 bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 px-3.5 py-1.5 rounded-full shadow-sm">
             <div className="flex items-center gap-1.5">
               {plan.blocks.map((_, idx) => {
                 const isPast = (blockIndex ?? 0) > idx;
@@ -204,36 +204,36 @@ export default function OutsidePage() {
                     key={idx}
                     className={`transition-all rounded-full ${
                       isCurrent
-                        ? 'w-5 h-2 bg-lime-400 shadow-[0_0_10px_rgba(132,204,22,0.9)]'
+                        ? 'w-5 h-2 bg-lime-500 dark:bg-lime-400 shadow-[0_0_10px_rgba(132,204,22,0.9)]'
                         : isPast
-                          ? 'w-2 h-2 bg-lime-500/60'
-                          : 'w-2 h-2 bg-slate-800'
+                          ? 'w-2 h-2 bg-lime-600/60 dark:bg-lime-500/60'
+                          : 'w-2 h-2 bg-slate-300 dark:bg-slate-800'
                     }`}
                   />
                 );
               })}
             </div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 border-l border-slate-800 pl-2">
+            <span className="font-jersey text-[11px] tracking-wider text-slate-600 dark:text-slate-400 border-l border-slate-200 dark:border-slate-800 pl-2">
               Drill {(blockIndex ?? 0) + 1} of {plan.blocks.length}
             </span>
           </div>
 
-          <span className="text-xs font-black tracking-widest uppercase text-lime-400 bg-lime-400/10 border border-lime-400/20 px-3 py-1 rounded-full">
+          <span className="font-jersey text-xs tracking-wider uppercase text-lime-600 dark:text-lime-400 bg-lime-500/10 dark:bg-lime-400/10 border border-lime-500/20 dark:border-lime-400/20 px-3 py-1 rounded-full">
             Current Drill
           </span>
           
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mt-4 mb-3">
+          <h1 className="font-jersey text-3xl sm:text-5xl tracking-wide text-slate-900 dark:text-white mt-4 mb-3">
             {currentDrillName}
           </h1>
           
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 w-full text-slate-300 text-sm sm:text-base leading-relaxed italic">
+          <div className="bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 w-full text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed italic shadow-sm">
             "{currentBlock?.cue}"
           </div>
 
-          <div className="flex items-center gap-3 mt-4 text-xs font-semibold text-slate-400">
-            <span>Duration: <strong className="text-white">{currentBlock?.minutes}m</strong></span>
+          <div className="font-jersey flex items-center gap-3 mt-4 text-xs text-slate-500 dark:text-slate-400">
+            <span>Duration: <strong className="text-slate-900 dark:text-white font-bold">{currentBlock?.minutes}m</strong></span>
             <span>•</span>
-            <span>Elapsed: <strong className="text-lime-400">{elapsedFormatted}</strong></span>
+            <span>Elapsed: <strong className="text-lime-600 dark:text-lime-400 font-bold">{elapsedFormatted}</strong></span>
           </div>
         </div>
 
@@ -250,14 +250,14 @@ export default function OutsidePage() {
               stroke="currentColor" 
               strokeWidth="10" 
               fill="transparent" 
-              className="text-slate-800/80" 
+              className="text-slate-200 dark:text-slate-800/80" 
             />
             <circle 
               cx="50%" cy="50%" r="42%" 
               stroke="currentColor" 
               strokeWidth="10" 
               fill="transparent" 
-              className="text-lime-400 transition-all duration-500 ease-linear shadow-[0_0_15px_rgba(132,204,22,0.4)]"
+              className="text-lime-500 dark:text-lime-400 transition-all duration-500 ease-linear shadow-[0_0_15px_rgba(132,204,22,0.4)]"
               strokeDasharray={2 * Math.PI * 135}
               strokeDashoffset={2 * Math.PI * 135 * (1 - progressPercent / 100)}
               strokeLinecap="round"
@@ -265,10 +265,10 @@ export default function OutsidePage() {
           </svg>
 
           <div className="flex flex-col items-center z-10 text-center select-none">
-            <span className="text-6xl sm:text-7xl font-black tracking-tighter font-mono text-white">
+            <span className="font-jersey text-6xl sm:text-7xl font-bold tracking-wider text-slate-900 dark:text-white">
               {remainingFormatted}
             </span>
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400 mt-2">
+            <span className="font-jersey text-xs tracking-widest text-slate-500 dark:text-slate-400 mt-2">
               Remaining
             </span>
           </div>
@@ -281,7 +281,7 @@ export default function OutsidePage() {
         {state === 'idle' && (
           <button 
             onClick={start} 
-            className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 py-4 sm:py-5 rounded-2xl font-black text-xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
+            className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 py-4 sm:py-5 rounded-2xl font-jersey text-2xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
           >
             Start Workout &rarr;
           </button>
@@ -290,7 +290,7 @@ export default function OutsidePage() {
         {state === 'running' && (
           <button 
             onClick={pause} 
-            className="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 py-4 sm:py-5 rounded-2xl font-black text-xl shadow-xl shadow-amber-500/20 active:scale-[0.99] transition-all"
+            className="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 py-4 sm:py-5 rounded-2xl font-jersey text-2xl shadow-xl shadow-amber-500/20 active:scale-[0.99] transition-all"
           >
             Pause
           </button>
@@ -299,7 +299,7 @@ export default function OutsidePage() {
         {state === 'paused' && (
           <button 
             onClick={resume} 
-            className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 py-4 sm:py-5 rounded-2xl font-black text-xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
+            className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-slate-950 py-4 sm:py-5 rounded-2xl font-jersey text-2xl shadow-xl shadow-lime-500/25 active:scale-[0.99] transition-all"
           >
             Resume Drill
           </button>
@@ -308,7 +308,7 @@ export default function OutsidePage() {
         {['running', 'paused'].includes(state) && (
           <button 
             onClick={handleNext} 
-            className="w-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white py-3.5 rounded-2xl font-bold text-sm active:scale-[0.99] transition-all"
+            className="w-full bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white py-3.5 rounded-2xl font-jersey text-base active:scale-[0.99] transition-all shadow-sm"
           >
             Skip to Next &rarr;
           </button>
@@ -317,13 +317,13 @@ export default function OutsidePage() {
 
       {/* Circuit Drawer / Modal */}
       {showDrillList && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 text-white shadow-2xl">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-800">
-              <h3 className="font-black text-lg">Today's Circuit Drills</h3>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 text-slate-900 dark:text-white shadow-2xl">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="font-jersey text-xl tracking-wide">Today's Circuit Drills</h3>
               <button 
                 onClick={() => setShowDrillList(false)}
-                className="w-8 h-8 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-bold"
+                className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white flex items-center justify-center font-bold"
               >
                 ✕
               </button>
@@ -336,21 +336,21 @@ export default function OutsidePage() {
                 return (
                   <div 
                     key={idx}
-                    className={`p-3 rounded-2xl border flex items-center justify-between text-xs ${
+                    className={`p-3 rounded-2xl border flex items-center justify-between text-xs font-jersey ${
                       isCurrent 
-                        ? 'bg-lime-400/10 border-lime-400 text-white font-bold'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400'
+                        ? 'bg-lime-500/10 dark:bg-lime-400/10 border-lime-500 dark:border-lime-400 text-slate-900 dark:text-white font-bold'
+                        : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-black text-[11px] ${
-                        isCurrent ? 'bg-lime-400 text-slate-950' : 'bg-slate-800 text-slate-400'
+                      <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-bold ${
+                        isCurrent ? 'bg-lime-500 dark:bg-lime-400 text-slate-950' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
                       }`}>
                         #{idx + 1}
                       </span>
                       <span>{name}</span>
                     </div>
-                    <span className={isCurrent ? 'text-lime-400 font-black' : ''}>{b.minutes}m</span>
+                    <span className={isCurrent ? 'text-lime-600 dark:text-lime-400 font-bold' : ''}>{b.minutes}m</span>
                   </div>
                 );
               })}

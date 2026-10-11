@@ -174,18 +174,18 @@ export default function SpotsPage() {
   });
 
   return (
-    <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto text-slate-100 flex flex-col gap-6">
+    <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto text-slate-900 dark:text-slate-100 flex flex-col gap-6">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/90 dark:border-slate-800/80">
         <div>
-          <span className="text-xs font-black uppercase tracking-wider text-lime-400 bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-400/20">
+          <span className="text-xs font-black uppercase tracking-wider text-lime-700 dark:text-lime-400 bg-lime-500/15 dark:bg-lime-400/10 px-2.5 py-0.5 rounded-full border border-lime-500/30 dark:border-lime-400/20">
             Court Directory
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-1">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white mt-1">
             Training Spots & Walls
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-lg">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-lg">
             Community-verified outdoor courts, sheltered walls, and training locations.
           </p>
         </div>
@@ -193,7 +193,7 @@ export default function SpotsPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/today"
-            className="text-xs font-extrabold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl transition-colors hidden sm:inline-block"
+            className="text-xs font-extrabold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-xl transition-colors hidden sm:inline-block"
           >
             &larr; Today
           </Link>
@@ -213,7 +213,7 @@ export default function SpotsPage() {
         
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 text-sm">
+          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 text-sm">
             🔍
           </span>
           <input
@@ -221,12 +221,12 @@ export default function SpotsPage() {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search by court name, city, landmark..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 focus:border-lime-400 rounded-2xl text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-lime-500 dark:focus:border-lime-400 rounded-2xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 outline-none transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white text-xs"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 dark:hover:text-white text-xs"
             >
               ✕
             </button>
@@ -248,7 +248,7 @@ export default function SpotsPage() {
               className={`px-3 py-2 rounded-xl border whitespace-nowrap transition-all ${
                 filterSport === chip.id
                   ? 'bg-lime-400 border-lime-400 text-slate-950 font-black shadow-md shadow-lime-400/20'
-                  : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                  : 'bg-white/80 dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
               }`}
             >
               {chip.label}
@@ -262,35 +262,35 @@ export default function SpotsPage() {
         {filteredSpots.map(spot => (
           <div 
             key={spot.id} 
-            className="bg-slate-900/70 border border-slate-800/80 p-5 rounded-3xl shadow-xl flex flex-col justify-between hover:border-slate-700 transition-all backdrop-blur-sm group"
+            className="bg-white/90 dark:bg-slate-900/70 border border-slate-200/90 dark:border-slate-800/80 p-5 rounded-3xl shadow-md dark:shadow-xl flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all backdrop-blur-sm group"
           >
             <div>
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className="font-black text-base sm:text-lg text-white tracking-tight group-hover:text-lime-300 transition-colors">
+                <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-white tracking-tight group-hover:text-lime-700 dark:group-hover:text-lime-300 transition-colors">
                   {spot.name}
                 </h3>
-                <span className="text-[10px] font-black uppercase text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded-md border border-sky-800/60 shrink-0">
+                <span className="text-[10px] font-black uppercase text-sky-700 dark:text-sky-400 bg-sky-100 dark:bg-sky-950/60 px-2 py-0.5 rounded-md border border-sky-200 dark:border-sky-800/60 shrink-0">
                   {spot.city}
                 </span>
               </div>
 
-              <p className="text-xs font-semibold text-slate-400 mb-3 flex items-center gap-1.5">
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1.5">
                 <span>📍</span>
                 <span>{spot.public_area}</span>
               </p>
 
               {spot.tip && (
-                <div className="text-xs leading-relaxed italic text-slate-300 bg-slate-950/60 border-l-2 border-lime-400 p-3 rounded-r-xl mb-4">
+                <div className="text-xs leading-relaxed italic text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/60 border-l-2 border-lime-500 dark:border-lime-400 p-3 rounded-r-xl mb-4">
                   "{spot.tip}"
                 </div>
               )}
             </div>
 
             {/* Bottom Actions & Tags */}
-            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-xs">
               <div className="flex flex-wrap gap-1">
                 {spot.sport_tags?.map(tag => (
-                  <span key={tag} className="text-[10px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-md">
+                  <span key={tag} className="text-[10px] text-slate-600 dark:text-slate-400 font-bold bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
                     #{tag}
                   </span>
                 ))}
@@ -302,8 +302,8 @@ export default function SpotsPage() {
                   onClick={() => toggleFavorite(spot.id)}
                   className={`p-1.5 rounded-lg border transition-colors ${
                     favoriteIds.includes(spot.id)
-                      ? 'bg-amber-400/20 text-amber-300 border-amber-400/40'
-                      : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                      ? 'bg-amber-400/20 text-amber-700 dark:text-amber-300 border-amber-400/40'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={favoriteIds.includes(spot.id) ? 'Remove bookmark' : 'Bookmark Court'}
                 >
@@ -312,7 +312,7 @@ export default function SpotsPage() {
                 <button
                   type="button"
                   onClick={() => handleShareSpot(spot)}
-                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                  className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
                   title="Copy spot details"
                 >
                   {copiedId === spot.id ? '✓' : '🔗'}
@@ -321,7 +321,7 @@ export default function SpotsPage() {
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${spot.name} ${spot.city}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold px-2 py-1 rounded-lg text-xs transition-colors flex items-center gap-1"
+                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-bold px-2 py-1 rounded-lg text-xs transition-colors flex items-center gap-1"
                 >
                   <span>Map</span>
                   <span>↗</span>
@@ -339,10 +339,10 @@ export default function SpotsPage() {
         ))}
 
         {filteredSpots.length === 0 && (
-          <div className="col-span-full text-center py-16 text-slate-400 bg-slate-900/40 border border-slate-800 rounded-3xl p-8">
+          <div className="col-span-full text-center py-16 text-slate-500 dark:text-slate-400 bg-white/60 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-3xl p-8">
             <div className="text-4xl mb-3">📍</div>
-            <div className="text-base font-bold text-white">No spots found matching your search.</div>
-            <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+            <div className="text-base font-bold text-slate-900 dark:text-white">No spots found matching your search.</div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
               Try adjusting your filter or tap "+ Add Training Spot" to add the first one in this area.
             </p>
           </div>
@@ -351,18 +351,18 @@ export default function SpotsPage() {
 
       {/* Add Spot Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl text-slate-100">
-            <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-800">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl text-slate-900 dark:text-slate-100">
+            <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-200 dark:border-slate-800">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-lime-400">
+                <span className="text-[10px] font-black uppercase tracking-widest text-lime-700 dark:text-lime-400">
                   Directory Contribution
                 </span>
-                <h3 className="font-black text-xl text-white">Add Training Spot</h3>
+                <h3 className="font-black text-xl text-slate-900 dark:text-white">Add Training Spot</h3>
               </div>
               <button 
                 onClick={() => setShowAddModal(false)}
-                className="w-8 h-8 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-bold"
+                className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center font-bold"
               >
                 ✕
               </button>
@@ -370,47 +370,47 @@ export default function SpotsPage() {
 
             <form onSubmit={handleCreateSpot} className="flex flex-col gap-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-400 mb-1">Court / Wall Name</label>
+                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1">Court / Wall Name</label>
                 <input 
                   type="text" 
                   value={newSpot.name}
                   onChange={e => setNewSpot({ ...newSpot, name: e.target.value })}
                   placeholder="e.g. Miller Playfield Wall"
                   required
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-lime-400 rounded-xl p-3 text-white font-medium outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:border-lime-500 dark:focus:border-lime-400 rounded-xl p-3 text-slate-900 dark:text-white font-medium outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-400 mb-1">Public Area / Landmark</label>
+                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1">Public Area / Landmark</label>
                 <input 
                   type="text" 
                   value={newSpot.public_area}
                   onChange={e => setNewSpot({ ...newSpot, public_area: e.target.value })}
                   placeholder="e.g. Lower concourse next to tennis court 3"
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-lime-400 rounded-xl p-3 text-white font-medium outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:border-lime-500 dark:focus:border-lime-400 rounded-xl p-3 text-slate-900 dark:text-white font-medium outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-400 mb-1">City</label>
+                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1">City</label>
                 <input 
                   type="text" 
                   value={newSpot.city}
                   onChange={e => setNewSpot({ ...newSpot, city: e.target.value })}
                   placeholder="e.g. Seattle"
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-lime-400 rounded-xl p-3 text-white font-medium outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:border-lime-500 dark:focus:border-lime-400 rounded-xl p-3 text-slate-900 dark:text-white font-medium outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-400 mb-1">Court Tip / Wind Conditions</label>
+                <label className="block font-bold text-slate-600 dark:text-slate-400 mb-1">Court Tip / Wind Conditions</label>
                 <textarea 
                   value={newSpot.tip}
                   onChange={e => setNewSpot({ ...newSpot, tip: e.target.value })}
                   placeholder="e.g. Best in early morning before wind picks up. Good floodlights until 9 PM."
                   rows={3}
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-lime-400 rounded-xl p-3 text-white font-medium outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:border-lime-500 dark:focus:border-lime-400 rounded-xl p-3 text-slate-900 dark:text-white font-medium outline-none"
                 />
               </div>
 
@@ -418,7 +418,7 @@ export default function SpotsPage() {
                 <button 
                   type="button" 
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3 rounded-xl transition-colors"
+                  className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-3 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
